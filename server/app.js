@@ -6,10 +6,12 @@ const MongoClient = require('mongodb').MongoClient;
 // Import required constant values
 const CONSTS = require("./constants");
 
+//regestering the model
+require("./models/wanderer.js");
 
 /* Handling connecting to MongoClient */
 // Check error in the initial connection
-MongoClient.connect(CONSTS.DB_URI, CONSTS.MONGO_OPTIONS, (err, client) => {
+MongoClient.connect(CONSTS.DB_URL, CONSTS.MONGO_OPTIONS, (err, client) => {
     if (err) {
         console.log(`Error in connecting to the Mongo client. Error: ${err}`);
         return;
@@ -23,5 +25,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(CONSTS.PORT, () => {
-    console.log(`Listening at port ${CONSTS.PORT}`);
+    console.log(`Listening at port ${CONSTS.PORT}.....`);
 })
