@@ -1,25 +1,22 @@
 // Instantiate express module
 const express = require('express');
 const app = express();
-// Instantiate mongoose module
-const mongoose = require('mongoose');
+// Instantiate MongoClient object
+const MongoClient = require('mongodb').MongoClient;
 // Import required constant values
 const CONSTS = require("./constants");
 
 
-/* Handling connecting to Mongoose */
+/* Handling connecting to MongoClient */
 // Check error in the initial connection
-mongoose.connect(CONSTS.DB_URI, CONSTS.MONGO_OPTIONS).
-    catch(error => {
-        console.log(`Error in connection to Mongoose. Error: ${error}`);
-    });
-// Check error after opening a connection
-mongoose.connection.on('connected', () => {
-    console.log("Successfully connected to Mongoose.");
-})
-mongoose.connection.on('error', (err) => {
-    console.log(`Error in connection to Mongoose. Error: ${err}`);
-})
+MongoClient.connect(CONSTS.DB_URI, CONSTS.MONGO_OPTIONS), (err, client) => {
+    if (err) {
+        console.log(`Error in connecting to the Mongo client. Error: ${err}`);
+        return;
+    } else {
+        console.log(`Database created. Client: ${client}`);
+    }
+}
 
 app.get('/', (req, res) => {
     res.send("<h1>Hello World!</h1>");
