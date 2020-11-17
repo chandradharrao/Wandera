@@ -8,7 +8,8 @@ const mongoose = require('mongoose');
 // Import required constant values
 const CONSTS = require("./constants");
 
-mongoose.connect()
+mongoose.connect(CONSTS.DB_URI);
+
 app.get('/', (req, res) => {
     res.send("<h1>Hello World!</h1>");
 })
