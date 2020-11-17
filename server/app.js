@@ -7,13 +7,16 @@ const mongoose = require('mongoose');
 const CONSTS = require("./constants");
 
 
-// Connect to Mongoose
-mongoose.connect(CONSTS.DB_URI);
+/* Handling connecting to Mongoose */
+// Check error in the initial connection
+mongoose.connect(CONSTS.DB_URI, CONSTS.MONGO_OPTIONS).
+    catch(error => handleError(error));
+// Check error after opening a connection
 mongoose.connection.on('connected', () => {
     console.log("Successfully connected to Mongoose.");
 })
-mongoose.connection.on('error', () => {
-    console.log("Error in connecting to Mongoose.");
+mongoose.connection.on('error', (err) => {
+    console.log(`Error in connecting to Mongoose. Error: ${err}`);
 })
 
 app.get('/', (req, res) => {
