@@ -1,11 +1,18 @@
+// Instantiate express module
 const express = require('express');
 const app = express();
-const PORT = 5500;
 
+// Instantiate mongoose module
+const mongoose = require('mongoose');
+
+// Import required constant values
+const CONSTS = require("./constants");
+
+mongoose.connect()
 app.get('/', (req, res) => {
     res.send("<h1>Hello World!</h1>");
 })
 
-app.listen(PORT, () => {
-    console.log(`Listening at port ${PORT}`);
+app.listen(CONSTS.PORT, () => {
+    console.log(`Listening at port ${CONSTS.PORT}`);
 })
