@@ -4,7 +4,8 @@
   "description": "Back-end development of the Wandera website.",
   "main": "app.js",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^5.10.15"
   },
   "devDependencies": {},
   "scripts": {
