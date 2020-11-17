@@ -9,14 +9,14 @@ const CONSTS = require("./constants");
 
 /* Handling connecting to MongoClient */
 // Check error in the initial connection
-MongoClient.connect(CONSTS.DB_URI, CONSTS.MONGO_OPTIONS), (err, client) => {
+MongoClient.connect(CONSTS.DB_URI, CONSTS.MONGO_OPTIONS, (err, client) => {
     if (err) {
         console.log(`Error in connecting to the Mongo client. Error: ${err}`);
         return;
     } else {
         console.log(`Database created. Client: ${client}`);
     }
-}
+});
 
 app.get('/', (req, res) => {
     res.send("<h1>Hello World!</h1>");
