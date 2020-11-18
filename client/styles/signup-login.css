@@ -1,0 +1,93 @@
+/* Login Page Style */
+.login {
+    width: 300px;
+    margin: auto;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+.login h1 {
+    text-align: left;
+    color: #4d4d4d;
+    font-size: 28px;
+    padding: 20px 0 10px 0;
+}
+.login input[type="password"],
+.login input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #c5c5c5;
+    margin-bottom: 10px;
+    box-sizing:border-box;
+    border-radius: 30px;
+}
+.login label {
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 0px 0px 8px 15px;
+    color: rgba(87, 82, 82, 0.7);
+    display: block;
+}
+.login input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #535d68;
+    border: 0;
+    border-radius: 30px;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: small;
+    color: #ffffff;
+}
+
+/* Signup Page Style */
+.signup {
+    width: 350px;
+    margin: auto;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+.signup h1 {
+    text-align: left;
+    color: #4d4d4d;
+    font-size: 28px;
+    padding: 20px 0 10px 0;
+}
+.signup .signup-text {
+    color: #6d6c6c;
+    font-size: 14px;
+}
+.signup .details {
+    padding: 10px;
+    box-sizing:border-box;
+    border-radius: 30px;
+}
+.signup input[type="password"],
+.signup input[type="date"],
+.signup input[type="text"] {
+    width: 100%;
+    padding: 7px;
+    border: 1px solid #c5c5c5;
+    margin-bottom: 10px;
+    box-sizing:border-box;
+    border-radius: 30px;
+}
+.signup input[type="submit"] {
+    width: 100%;
+    padding: 8px;
+    background-color: #535d68;
+    border: 0;
+    border-radius: 30px;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: small;
+    color: #ffffff;
+}
+.signup label {
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 0px 0px 8px 15px;
+    color: rgba(87, 82, 82, 0.7);
+    display: block;
+}
