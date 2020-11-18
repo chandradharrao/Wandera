@@ -1,23 +1,55 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <!-- <meta name="description" content=""> -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- <link rel="stylesheet" href=""> -->
-    </head>
-    <body>
-        <h1>Sign Up</h1>
-        <form action="/signup-info" method="post">
-            <label for="fname">First name: </label>
-            <input type="text" id="fname" name="fname"><br><br>
-            <label for="lname">Last name: </label>
-            <input type="text" id="lname" name="lname"><br><br>
-            <label for="email">Email: </label>
-            <input type="text" id="email" name="email"><br><br>
-            <input type="submit" value="Submit">
-          </form>
-    </body>
+	<head>
+		<meta charset="utf-8">
+		<title>Wandera - Create an Account</title>
+		<style>
+            .signup {
+                width: 300px;
+                margin: 0 auto;
+                font-family: Tahoma, Geneva, sans-serif;
+            }
+            .signup h1 {
+                text-align: center;
+                color: #4d4d4d;
+                font-size: 24px;
+                padding: 20px 0 20px 0;
+            }
+            .signup input[type="password"],
+            .signup input[type="date"],
+            .signup input[type="text"] {
+                width: 100%;
+                padding: 15px;
+                border: 1px solid #c5c5c5;
+                margin-bottom: 20px;
+                box-sizing:border-box;
+            }
+            .signup input[type="submit"] {
+                width: 100%;
+                padding: 15px;
+                background-color: #535d68;
+                border: 0;
+                border-radius: 5px 5px 5px 5px;
+                box-sizing: border-box;
+                cursor: pointer;
+                font-weight: bold;
+                color: #ffffff;
+            }
+		</style>
+	</head>
+	<body>
+		<div class="signup">
+            <h1>Sign Up</h1>
+            <form action="/signup-info" method="POST">
+                <input type="text" name="fname" placeholder="First Name" required>
+                <input type="text" name="lname" placeholder="Last Name" required>
+                <input type="text" name="email" placeholder="Email" required>
+                <input type="date" name="dob" min="1900-01-01" required>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+				<input type="password" name="password_again" placeholder="Enter the password again" required>
+                <input type="submit" value="Submit">
+            </form>
+		</div>
+	</body>
 </html>
