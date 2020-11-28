@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const user = new mongoose.Schema({//creating the user schema
+// Creating the 'user' schema
+const user = new mongoose.Schema({
     first_name:{
         type:String,
         required:true
@@ -15,4 +16,5 @@ const user = new mongoose.Schema({//creating the user schema
     }
 })
 
-mongoose.model("Wanderer",user);//interface for db querying,creating and updating records
+// Interface for DB querying, creating and updating records
+mongoose.model("Wanderer", user);
