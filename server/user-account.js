@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const path = require("path");
+
+//importing the user model
+const User = require('./models/wanderer');
 const mongoose = require('mongoose');
-mongoose.connect("mongodb://localhost:27017/USERSCOLLECTION",{ useUnifiedTopology: true, useNewUrlParser: true });
 
-//const CONSTS = require("./constants");
-const wanderer = require('./models/wanderer');//importing the Wanderer model
+//connect to mongoose
+mongoose.connect("mongodb://localhost:27017/usersdb",{ useUnifiedTopology: true, useNewUrlParser: true });
 
-//db.once("open",()=>{//called first time when db is opened
-    //console.log("Connection established with mongoDB successfully!!");
-//})
+//since mongoose promise is deprecated,lets override it node js promise
+mongoose.Promise = global.Promise;
 
 router.get('/', (req, res) => {
     res.send("<h1>Wandera HomePage</h1>");
@@ -33,42 +34,27 @@ router.post("/signup-info", (req, res) => {
         res.status(422).json({error : "Passwords Do not match."});
     } 
     else {
-        const db = mongoose.connection;//ref to db
-         db.once("open",(err,resp)=>{
-                console.log("Connection successfull!!" + resp);
-                //query db with the email recieved
-                wanderer.findOne({email:email},(err,data)=>{
-                    if(err){
-                        res.status(422).json({error:'Not able to search the db'});
-                        throw err;
-                    }
-                    else if(!data){//if no wanderer found with that email
-                        const newWanderer = new wanderer({
-                            email:email,
-                            password:password,
-                            last_name:lastname,
-                            first_name:firstname
-                        });
-                        //insert the data
-                        wanderer.insertMany([newWanderer],(err,res)=>{
-                            if(err){
-                                res.status(422).json({error:err});
-                            }
-                            else{
-                                res.status(200).json({result:"Saved successfully to mongodb"});
-                            }
-                        });
-                    }
-                    else{
-                        res.status(422).json({error: "wanderer with that email already exists"});
-                        //redirect to the login page
-                    }
-            })
-         })
-         console.log("Skipped")
-         res.json({message:"Successfully posted", 
-                  'Name' : (firstname + ' ' + lastname), 
-         'Email Address' : email});
+
+        User.findOne({email:email},(err,data)=>{
+            if(!data){
+                console.log("No user with this email till now");
+                //create the new user obj and save it simultaneously to the WandereCollection and returns a promise since its async
+                User.create({
+                    email:email,
+                    password:password,
+                    last_name:lastname,
+                    first_name:firstname
+                }).then((savedData)=>{//once its saved,the saved dayt is returned back
+                    console.log("Data saved");
+                    res.json({message : 'saved u successfully'});
+                });
+            }
+            else{
+                console.log("USer exists!!");
+                res.json({err:'user already exists'});
+                //redirect to the login page
+            }
+        })
     }
 });
 
