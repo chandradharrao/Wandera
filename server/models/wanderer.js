@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { stringify } = require('querystring');
 
 // Creating the 'user' schema
 const userSchema = new mongoose.Schema({
@@ -15,6 +16,10 @@ const userSchema = new mongoose.Schema({
         required:true
     },
     email:{
+        type:String,
+        required:true
+    },
+    username:{
         type:String,
         required:true
     }
