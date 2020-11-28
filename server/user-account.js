@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const path = require("path");
 const bcrypt = require('bcryptjs');
+const JWT = require('jsonwebtoken');
+const CONSTS = require('./constants');
 
 //importing the user model as User
 const User = require('./models/wanderer');
@@ -114,12 +116,13 @@ router.post('/login-info',(req,res)=>{
 
     User.findOne({username:loginDetails.username}).then((foundData)=>{//this promise returns the found data
         if(foundData){//if the found data is not empty means user already present,now we need to compare the password already in db and the password he is entering
-            console.log("User with this email exists!");
+            console.log("User with this email exists in db!");
             bcrypt.compare(loginDetails.password,foundData.password).then((doesMatch)=>{//this promise waits for getting the compare boolean and then executes async
                 if(doesMatch){//if the passwords are the same
-                    console.log("The username and password match!!");
-                    res.status(200).json({message:"You can go to your home page"});
-                    //redirect user to his feed or homepage
+                    console.log("Redirecting to homepage...!!");
+                    /* JWT will be used to verify/authenticate users and identify them.JWT have the details unlike session ids that would have the reference to the detaisls tored in the server reducing the load.They are signed to prevent users from manipulating.We use jwt so that users can access only their feed or posts(protected resources) and not others. */
+                    const token = JWT.sign({_id:foundData._id},CONSTS.JWT_SECRET);//replace the id of db with the signed token
+                    res.json({token : token});//this is the token gievn to the user
                 }
                 else{
                     console.log("Your username and password didnt match!");
