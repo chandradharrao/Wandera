@@ -49,11 +49,11 @@ router.post("/signup-info", (req, res) => {
                 console.log("No user with this email till now");
 
                 //check if user name aleady exists
-                User.findOne({username:username},(err,res)=>{
+                User.findOne({username:username},(err,foundUser)=>{
                     if(err){
                         return res.json({error:err});
                     }
-                    if(!res){
+                    if(!foundUser){
                         console.log("No user with this username till now");
                         //hashing the password before saving
                         bcrypt.hash(password,12).then(hashedPassword=>{
@@ -100,7 +100,7 @@ router.post('/login-info',(req,res)=>{
     else if(uName && !password){
         return res.status(422).json({error:"Enter a Password"});
     }
-    else if(!uname && ! password){
+    else if(!uName && ! password){
         return res.status(422).json({error:"Enter both Username and password"});
     }
 
