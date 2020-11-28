@@ -66,7 +66,7 @@ router.post("/signup-info", (req, res) => {
                                 first_name:firstname
                             }).then((savedData)=>{//once its saved,the saved dayt is returned back
                                 console.log("Data saved");
-                                res.json({message : "saved u successfully"});
+                                res.json({message : savedData});
                             }).catch(err=>{
                                 console.log(err);
                             });
@@ -110,8 +110,10 @@ router.post('/login-info',(req,res)=>{
         password:password
     };
 
+    console.log(`I am tryina find ${loginDetails.username} in the db`);
+
     User.findOne({username:loginDetails.username}).then((foundData)=>{//this promise returns the found data
-        if(!foundData){//if the found data is not empty means user already present,now we need to compare the password already in db and the password he is entering
+        if(foundData){//if the found data is not empty means user already present,now we need to compare the password already in db and the password he is entering
             console.log("User with this email exists!");
             bcrypt.compare(loginDetails.password,foundData.password).then((doesMatch)=>{//this promise waits for getting the compare boolean and then executes async
                 if(doesMatch){//if the passwords are the same
@@ -126,6 +128,10 @@ router.post('/login-info',(req,res)=>{
             }).catch((err)=>{
                 console.log(err);
             })
+        }
+        else{
+            res.json({error:'Please signup as you dont have an account yet!'});
+            //signu page rediection
         }
     }).catch((err)=>{
         console.log(err);
