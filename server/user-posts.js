@@ -116,13 +116,6 @@ router.put('/unlike',LoginAuth,(req,res)=>{//we use put for 'updating' the likes
     })
 })
 
-/*router.put('/unlike',LoginAuth,(req,res)=>{
-    Post.update({'_id': req.body.post_id},
-                        {$pull : {likedBy:{likerID:req.user._id,likerName:req.user.username}}},{safe:true},(err,data)=>{
-                            res.json({message:data});
-                        });
-});*/
-
 router.put('/comment',LoginAuth,(req,res)=>{//we use put for 'updating' the likes array
 
     const newComment = {
@@ -139,6 +132,25 @@ router.put('/comment',LoginAuth,(req,res)=>{//we use put for 'updating' the like
             return res.status(422).json({error:err});
         }
         return res.status(200).json({result:result});
+    })
+})
+
+router.delete('/deletepost',LoginAuth,(req,res)=>{
+    Post.findOne({_id:req.body.post_id}).exec((err,thepost)=>{//pass the id of the post to be deleted through the front end
+        if(err || !thepost){
+            return res.status(422).json({error:err});
+        }
+        if(thepost.postedById.toString() === req.user._id.toString() && thepost.postedByUName === req.user.username){//if the post is published by user itself then only we can delete
+            thepost.remove().then((result)=>{
+                res.status(200).json({
+                    message:"Deleted successfully"
+                });
+            }).catch((err)=>{
+                res.status(422).json({
+                    error:err
+                })
+            })
+        }
     })
 })
 

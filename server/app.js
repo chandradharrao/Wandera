@@ -7,6 +7,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());
 app.use(require("./user-account"));
 app.use(require("./user-posts"));
+app.use(require("./public-profiles"));
 
 app.listen(CONSTS.PORT, () => {
     console.log(`Listening at port ${CONSTS.PORT}...`);
