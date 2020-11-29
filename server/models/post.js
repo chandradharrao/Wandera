@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const CommentSchema = require('./comments');
-const LikeSchema = require('./like')
+const LikeSchema = require('./like');
 
 const PostSchema = new mongoose.Schema({
     title:{
@@ -24,7 +24,7 @@ const PostSchema = new mongoose.Schema({
         required:true
     },
     likedBy:[{type:LikeSchema}],//an array that contains the users who liked the particular post
-    comments:[{type:CommentSchema}]
+    comments:[{type:CommentSchema}],
 })
 
 const Post = mongoose.model("PostCollection",PostSchema);//"postCollection" collection will follow PostSchema when storing the data
