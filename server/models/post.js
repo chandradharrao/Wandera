@@ -10,11 +10,11 @@ const PostSchema = new mongoose.Schema({
         required:true
     },
     photo:{
-        type:String,
+        type:String,//url of the photo posted
         required:true
     },
     postedBy:{
-        type:mongoose.Schema.Types.ObjectId,//each user will be identified by obect id,hence this field should be object id data type
+        type:mongoose.Schema.Types.ObjectId,//each user will be identified by object id,hence this field should be object id data type.
         ref:"WandererCollection" //the id will refer to user in the "WandererCollection" collection.This is how we create a relationship
     }
 })

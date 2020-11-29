@@ -10,8 +10,8 @@ const LoginAuth = require('./MiddleWears/LoginAuth');
 const User = require('./models/wanderer');
 const mongoose = require('mongoose');
 
-//router for accessing proteted resource
-router.get('/feed',LoginAuth,(req,res)=>{//has to pass through the middle wear
+//router for accessing proteted resource like his feed
+router.get('/feed',LoginAuth,(req,res)=>{//this route has to pass through the middle wear
     res.json({message:"Hi user!This is your home page!"});
 })
 
@@ -72,7 +72,7 @@ router.post("/signup-info", (req, res) => {
                                 username:username,
                                 last_name:lastname,
                                 first_name:firstname
-                            }).then((savedData)=>{//once its saved,the saved dayt is returned back
+                            }).then((savedData)=>{//once its saved,the saved data is returned back
                                 console.log("Data saved");
                                 res.json({message : savedData});
                             }).catch(err=>{
@@ -128,9 +128,8 @@ router.post('/login-info',(req,res)=>{
                     console.log("Redirecting to homepage...!!");
                     /* JWT will be used to verify/authenticate users and identify them.JWT have the details unlike session ids that would have the reference to the detaisls tored in the server reducing the load.They are signed to prevent users from manipulating.We use jwt so that users can access only their feed or posts(protected resources) and not others. */
                     const token = JWT.sign({_id:foundData._id},CONSTS.JWT_SECRET);//replace the id of db with the signed token
-                    res.json({token : token});//this is the token gievn to the user upon logging in successfully,this will be used to keep track of the usr and allow him to access protected resources
+                    res.json({token : token});//this is the token gievn to the user upon logging in successfully,this will be used to keep track of the user and allow him to access protected resources
                 }
-                //https://lcalhost:3000/fed?Authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmMyODFmYzJhN2NkZDdiZThmODY0ZjQiLCJpYXQiOjE2MDY1ODMwMjR9.hTT5XrHIsa9j21voechWSTzOBxGGWw5CNJSpt7S6SYM
                 else{
                     console.log("Your username and password didnt match!");
                     return res.status(422).json({message:'Your username and password didnt match'})
