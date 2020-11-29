@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const { stringify } = require('querystring');
 
 // Creating the 'user' schema
-const user = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     first_name:{
         type:String,
         required:true
@@ -13,8 +14,17 @@ const user = new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    email:{
+        type:String,
+        required:true
+    },
+    username:{
+        type:String,
+        required:true
     }
 })
 
-// Interface for DB querying, creating and updating records
-mongoose.model("Wanderer", user);
+//Export the model so that data of userSchema type are saved in WandererCollection
+const User = mongoose.model("WandererCollection", userSchema);
+module.exports = User;
