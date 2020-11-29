@@ -21,6 +21,7 @@ MongoClient.connect(CONSTS.DB_URL, CONSTS.MONGO_OPTIONS, (err, client) => {
     }
 });
 
-app.listen(CONSTS.PORT, () => {
-    console.log(`Listening at port ${CONSTS.PORT}...`);
-})
+const port = process.env.PORT || CONSTS.PORT;
+app.listen(port, () => {
+    console.log(`Listening at port ${port}...`);
+});
