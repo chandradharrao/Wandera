@@ -16,7 +16,7 @@ module.exports = (req,res,next)=>{
     const authHeader = req.header('Authorization');
     console.log(`The auth head is ${authHeader}`);
     if(!authHeader){
-        req.status(401).json({error:"You must be logged in"})
+        return res.status(401).json({error:"You must be logged in"})
     }
     const assignedToken = authHeader.split(' ')[1];//of the form Bearer 23eg#45ghk
     //check if the token is valid
@@ -31,6 +31,7 @@ module.exports = (req,res,next)=>{
                 //store it in the request.user
                 console.log(foundData);
                 req.user = foundData;//now using this he can navigate to his protected resources like feed
+                console.log(`Assigning found data to url : ${req.user}`);
                 next();
             });
         }

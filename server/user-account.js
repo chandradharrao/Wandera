@@ -11,7 +11,7 @@ const User = require('./models/wanderer');
 const mongoose = require('mongoose');
 
 //router for accessing proteted resource like his feed
-router.get('/feed',LoginAuth,(req,res)=>{//this route has to pass through the middle wear
+router.get('/protected',LoginAuth,(req,res)=>{//this route has to pass through the middle wear
     res.json({message:"Hi user!This is your home page!"});
 })
 
@@ -145,5 +145,13 @@ router.post('/login-info',(req,res)=>{
     }).catch((err)=>{
         console.log(err);
     })
+})
+
+router.post('/logout',(req,res)=>{
+    req.user = '';
+    if(!req.user){
+        return res.status(200).json({message:"You have been logged out!"});
+    }
+    return res.status(422).json({error:"Not able to log out"});
 })
 module.exports = router;
