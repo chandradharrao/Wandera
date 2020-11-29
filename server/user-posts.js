@@ -12,6 +12,8 @@ mongoose.connect("mongodb://localhost:27017/usersdb",{ useUnifiedTopology: true,
 
 //since mongoose promise is deprecated,lets override it node js promise
 mongoose.Promise = global.Promise;
+//Remove depreceation warnings
+mongoose.set('useFindAndModify',false);
 
 //serve the create-a-post.html
 router.get('/create-a-post',LoginAuth,(req,res)=>{
@@ -59,6 +61,84 @@ router.get('/viewmyposts',LoginAuth,(req,res)=>{
     }).catch((err)=>{
         console.log(err);
         res.status(422).json({error:"Not able to fetch your posts:<"});
+    })
+})
+
+
+//havent tested since it will be a bit irritating to test using postman,lets test it after donf front end
+router.put('/like',LoginAuth,(req,res)=>{//we use put for 'updating' the likes array
+    console.log(`Liked by ${req.user._id}`);
+    Post.findById(req.body.post_id,(err,doc)=>{
+        if(err){
+            return res.status(404).json({error:err});
+        }
+        var isAlreadyLiked = false;
+        for(var i = 0;i<doc.likedBy.length;i++){
+            console.log(doc.likedBy[i].likerName);
+            if(doc.likedBy[i].likerName === req.user.username){
+                console.log("User already Liked");
+                isAlreadyLiked = true;
+            }
+        }
+        newLike = {
+            likerID:req.user._id,
+            likerName:req.user.username
+        }
+        if(!isAlreadyLiked){
+            Post.findByIdAndUpdate(req.body.post_id,{
+                $push : {likerID:req.user.id,likedBy:newLike} //we will use the set operator to modify the likes array by pushing the current user who liked the post
+            },{
+                new:true //return the modified record
+            }).exec((err,result)=>{//execute te query
+                if(err){
+                    return res.status(422).json({error:err});
+                }
+                return res.status(200).json({result:result});
+            });
+        }
+        else{
+            return res.json({message:"Already liked!"});
+        }
+    });
+})
+
+router.put('/unlike',LoginAuth,(req,res)=>{//we use put for 'updating' the likes array
+    console.log(`We wanna remove the liker ${req.user._id} from this post ${req.body.post_id}`);
+    Post.findByIdAndUpdate(req.body.post_id,{
+        $pull : {likedBy:{likerName:req.user.username}} //we will use the set operator to modify the likes array by pulling the current user who liked the post
+    },{
+        new:true //return the modified record
+    }).exec((err,result)=>{//execute te query
+        if(err){
+            return res.status(422).json({error:err});
+        }
+        return res.status(200).json({result:result});
+    })
+})
+
+/*router.put('/unlike',LoginAuth,(req,res)=>{
+    Post.update({'_id': req.body.post_id},
+                        {$pull : {likedBy:{likerID:req.user._id,likerName:req.user.username}}},{safe:true},(err,data)=>{
+                            res.json({message:data});
+                        });
+});*/
+
+router.put('/comment',LoginAuth,(req,res)=>{//we use put for 'updating' the likes array
+
+    const newComment = {
+        content:req.body.text,//the body of the text from the front end
+        authorID:req.user._id,
+        authorName:req.user.username
+    }
+    Post.findByIdAndUpdate(req.body.post_id,{//find the particular post and chage its comments field
+        $push : {comments:newComment}
+    },{
+        new:true 
+    }).exec((err,result)=>{
+        if(err){
+            return res.status(422).json({error:err});
+        }
+        return res.status(200).json({result:result});
     })
 })
 
