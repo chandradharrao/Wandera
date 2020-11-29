@@ -28,7 +28,8 @@ router.put('/follow',LoginAuth,(req,res)=>{//the logged in user(LoginAuth) on cl
         follow_unfollowID:req.user._id,
         follow_unfollowUsername:req.user.username
     };
-    if(req.body.toFollowID.toString() === req.user._id.toString())
+
+    if((req.body.toFollowID).toString() === (req.user._id).toString())
     {
         return res.status(422).json({message:"You can't follow yourself :)"});
     }
@@ -42,8 +43,8 @@ router.put('/follow',LoginAuth,(req,res)=>{//the logged in user(LoginAuth) on cl
         Celebrity = result;
         //now update the follwing array of the user who followed toUnFollowID
         var theCelebrity = {
-            follow_unfollowID:req.user._id,
-            follow_unfollowUsername:req.user.username
+            follow_unfollowID:req.body.toFollowID,
+            follow_unfollowUsername:Celebrity.username
         };
         User.findByIdAndUpdate(req.user._id,{
             $push:{following:theCelebrity}
@@ -52,7 +53,7 @@ router.put('/follow',LoginAuth,(req,res)=>{//the logged in user(LoginAuth) on cl
                 return res.status(422).json({error:err});
             }
             Me = result;
-            console.log(`${Celebrity} got followed by ${Me} successfully!`)
+            console.log(`${Celebrity.username} got followed by ${Me.username} successfully!`)
             return res.status(200).json({message:"Successfully Followed"});
         })
     })
@@ -99,6 +100,11 @@ router.get("/get-all-users",(req,res)=>{
         }
         return res.json({message:result});
     })
+});
+
+//ony for testing
+router.get("/whoamI",LoginAuth,(req,res)=>{
+    return res.json({message:req.user});
 })
 
 module.exports = router;

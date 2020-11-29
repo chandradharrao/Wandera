@@ -51,6 +51,16 @@ router.get('/viewallposts',(req,res)=>{
     }).catch((err)=>{
         res.status(422).json({message:"Not able to fetch all posts"});
     })
+});
+
+//get the posts posted by the users whom I follow
+router.get("/viewmyfeed",LoginAuth,(req,res)=>{
+    //Out of all the posts,find those posts that are posted by users presents in the following array of the user loggd in
+    Post.find({postedByUName:{$in:req.user.following.follow_unfollowUsername}}).then((docs)=>{//this is similar to "if 3 in [1,2,3] of python",$in matches postedBy to those fields present in req.users.folowing,this can be done with the help of a for loop too.
+        res.status(200).json({posts:docs});
+    }).catch((err)=>{
+        res.status(422).json({message:"Not able to fetch all posts"});
+    })
 })
 
 router.get('/viewmyposts',LoginAuth,(req,res)=>{
