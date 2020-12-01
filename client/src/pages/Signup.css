@@ -1,0 +1,106 @@
+@import "../font-styling.css";
+
+.signup-page {
+  background-image: url("../images/Maps.jpg");
+  width: 100%;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.signup-container {
+  justify-content: center;
+  display: flex;
+  flex-flow: column wrap;
+  align-content: center;
+  background: #f8f7f7;
+  margin: 0 30%;
+  padding: 0.5em 0;
+  box-shadow: 0px 15px 16.83px 0.17px rgba(15, 15, 15, 0.05);
+  font-family: Cormorant_Garamond;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.25vw;
+  color: #424242;
+}
+
+.signup-container h1 {
+  font-family: Cinzel;
+  font-weight: normal;
+  font-size: 2.5vw;
+  text-align: center;
+  color: #333232;
+}
+
+.signup-form input[type="password"],
+.signup-form input[type="date"],
+.signup-form input[type="text"] {
+  width: 100%;
+  padding: 0.8em;
+  border: none;
+  border-bottom: 0.5px solid #c5c5c5;
+  box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+  margin: 0.9em 0;
+  box-sizing: border-box;
+  border-radius: 1em;
+}
+
+.signup-form input[type="password"]:hover,
+.signup-form input[type="date"]:hover,
+.signup-form input[type="text"]:hover {
+  border-bottom: 0.5px solid #bdbdbd;
+  box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.253);
+}
+
+.signup-form input[type="submit"] {
+  width: 100%;
+  padding: 0.1em;
+  border: none;
+  border-bottom: 0.5px solid #c5c5c5;
+  box-shadow: 0 0 15px 4px rgba(163, 163, 163, 0.534);
+  margin: 0.8em 0;
+  box-sizing: border-box;
+  border-radius: 1em;
+  font-family: Cinzel;
+  font-weight: normal;
+  font-size: 27px;
+  color: #cfcfcf;
+  background-color: #333232;
+  cursor: pointer;
+}
+
+.signup-form input[type="submit"]:hover {
+  box-shadow: 0 0 15px 4px rgba(163, 163, 163, 0.781);
+  background-color: #5a5959;
+  color: aliceblue;
+}
+
+.have-account {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  font-size: 30px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.have-account a {
+  padding: 0.3em;
+  margin: 1em;
+  border: none;
+  border-bottom: 0.5px solid #c5c5c5;
+  box-shadow: 0 0 15px 4px rgba(163, 163, 163, 0.534);
+  box-sizing: border-box;
+  border-radius: 1em;
+  font-family: Cinzel;
+  font-weight: normal;
+  font-size: 20px;
+  color: #cfcfcf;
+  background-color: #333232;
+}
+
+.have-account a:hover {
+  box-shadow: 0 0 15px 4px rgba(163, 163, 163, 0.781);
+  background-color: #5a5959;
+  color: aliceblue;
+}

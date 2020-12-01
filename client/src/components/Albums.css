@@ -1,0 +1,18 @@
+@import "../font-styling.css";
+
+.albums {
+  max-width: 75%;
+  margin: 3em auto;
+}
+
+.albums-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.albums-container img {
+  margin: 1em 0.5em;
+  width: 30%;
+  height: 400px;
+}

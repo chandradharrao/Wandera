@@ -1,0 +1,46 @@
+@import "../font-styling.css";
+
+.about {
+  border-bottom: 1px solid rgb(202, 202, 202);
+}
+
+.about-container {
+  display: flex;
+  justify-content: space-around;
+  margin: 15px 20%;
+  font-family: Quicksand;
+  font-size: 2vh;
+}
+
+.user-info .Name {
+  font-family: Cormorant_Garamond;
+  font-weight: normal;
+  font-size: 5.5vh;
+  margin-top: 0.05em;
+  margin-bottom: 0.5em;
+  color: #080808;
+}
+
+.user-info .Username {
+  font-size: 4vh;
+  margin: 0.4em 0;
+  font-family: Quicksand;
+  color: #313131;
+}
+
+.user-image img {
+  width: 160px;
+  height: 160px;
+  border-radius: 80px;
+}
+
+.user-stats {
+  display: flex;
+  justify-content: space-between;
+  width: 120%;
+}
+
+.user-stats span {
+  margin: 0.5em 0;
+  font-size: 2.4vh;
+}
