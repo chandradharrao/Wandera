@@ -1,0 +1,72 @@
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 300;
+  src: url("./fonts/Poppins/poppins-v5-latin-300.ttf");
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  src: url("./fonts/Poppins/poppins-v5-latin-500.ttf");
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  src: url("./fonts/Poppins/poppins-v5-latin-700.ttf");
+}
+@font-face {
+  font-family: "Quicksand";
+  font-style: normal;
+  font-weight: lighter;
+  src: url("./fonts/Quicksand/Quicksand-Light.ttf");
+}
+@font-face {
+  font-family: "Quicksand";
+  font-style: normal;
+  font-weight: normal;
+  src: url("./fonts/Quicksand/Quicksand-Regular.ttf");
+}
+@font-face {
+  font-family: "Quicksand";
+  font-style: normal;
+  font-weight: bold;
+  src: url("./fonts/Quicksand/Quicksand-SemiBold.ttf");
+}
+@font-face {
+  font-family: "Cinzel";
+  font-style: normal;
+  font-weight: bold;
+  src: url("./fonts/Cinzel/Cinzel-ExtraBold.ttf");
+}
+@font-face {
+  font-family: "Cinzel";
+  font-style: normal;
+  font-weight: normal;
+  src: url("./fonts/Cinzel/Cinzel-Medium.ttf");
+}
+@font-face {
+  font-family: "Cinzel";
+  font-style: normal;
+  font-weight: lighter;
+  src: url("./fonts/Cinzel/Cinzel-Regular.ttf");
+}
+@font-face {
+  font-family: "Cormorant_Garamond";
+  font-style: normal;
+  font-weight: normal;
+  src: url("./fonts/Cormorant_Garamond/CormorantGaramond-Regular.ttf");
+}
+@font-face {
+  font-family: "Cormorant_Garamond";
+  font-style: italic;
+  font-weight: normal;
+  src: url("./fonts/Cormorant_Garamond/CormorantGaramond-Italic.ttf");
+}
+@font-face {
+  font-family: "Cormorant_Garamond";
+  font-style: normal;
+  font-weight: bold;
+  src: url("./fonts/Cormorant_Garamond/CormorantGaramond-Bold.ttf");
+}

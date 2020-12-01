@@ -1,0 +1,12 @@
+@import "./font-styling.css";
+
+body {
+  margin: 5px;
+  font-family: Quicksand, Poppins;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: monospace;
+}
