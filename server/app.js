@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require("body-parser");
-const CONSTS = require("./constants");
+const CONSTS = require("./components/constants");
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());

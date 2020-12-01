@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const path = require("path");
-const LoginAuth = require('./MiddleWears/LoginAuth');
+const login_authorize = require('./middleware/login_authorize');
 
 //importing the user model as User
 const Post = require('./models/post');
@@ -16,11 +16,11 @@ mongoose.Promise = global.Promise;
 mongoose.set('useFindAndModify',false);
 
 //serve the create-a-post.html
-router.get('/create-a-post',LoginAuth,(req,res)=>{
+router.get('/create-a-post',login_authorize,(req,res)=>{
     res.sendFile(path.join(__dirname, "../client", "/common/create-post.html"));
 })
 
-router.post('/createpost',LoginAuth,(req,res)=>{
+router.post('/createpost',login_authorize,(req,res)=>{
     console.log(req.body)
     const title = req.body.title;
     const body = req.body.body;
@@ -54,7 +54,7 @@ router.get('/viewallposts',(req,res)=>{
 });
 
 //get the posts posted by the users whom I follow
-router.get("/viewmyfeed",LoginAuth,(req,res)=>{
+router.get("/viewmyfeed",login_authorize,(req,res)=>{
     //Out of all the posts,find those posts that are posted by users presents in the following array of the user loggd in
     Post.find({postedByUName:{$in:req.user.following.follow_unfollowUsername}}).then((docs)=>{//this is similar to "if 3 in [1,2,3] of python",$in matches postedBy to those fields present in req.users.folowing,this can be done with the help of a for loop too.
         res.status(200).json({posts:docs});
@@ -63,7 +63,7 @@ router.get("/viewmyfeed",LoginAuth,(req,res)=>{
     })
 })
 
-router.get('/viewmyposts',LoginAuth,(req,res)=>{
+router.get('/viewmyposts',login_authorize,(req,res)=>{
     Post.find({
         postedById:req.user._id
     }).then((data)=>{
@@ -76,7 +76,7 @@ router.get('/viewmyposts',LoginAuth,(req,res)=>{
 
 
 //havent tested since it will be a bit irritating to test using postman,lets test it after donf front end
-router.put('/like',LoginAuth,(req,res)=>{//we use put for 'updating' the likes array
+router.put('/like',login_authorize,(req,res)=>{//we use put for 'updating' the likes array
     console.log(`Liked by ${req.user._id}`);
     Post.findById(req.body.post_id,(err,doc)=>{
         if(err){
@@ -112,7 +112,7 @@ router.put('/like',LoginAuth,(req,res)=>{//we use put for 'updating' the likes a
     });
 })
 
-router.put('/unlike',LoginAuth,(req,res)=>{//we use put for 'updating' the likes array
+router.put('/unlike',login_authorize,(req,res)=>{//we use put for 'updating' the likes array
     console.log(`We wanna remove the liker ${req.user._id} from this post ${req.body.post_id}`);
     Post.findByIdAndUpdate(req.body.post_id,{
         $pull : {likedBy:{likerName:req.user.username}} //we will use the set operator to modify the likes array by pulling the current user who liked the post
@@ -126,7 +126,7 @@ router.put('/unlike',LoginAuth,(req,res)=>{//we use put for 'updating' the likes
     })
 })
 
-router.put('/comment',LoginAuth,(req,res)=>{//we use put for 'updating' the likes array
+router.put('/comment',login_authorize,(req,res)=>{//we use put for 'updating' the likes array
 
     const newComment = {
         content:req.body.text,//the body of the text from the front end
@@ -145,7 +145,7 @@ router.put('/comment',LoginAuth,(req,res)=>{//we use put for 'updating' the like
     })
 })
 
-router.delete('/deletepost',LoginAuth,(req,res)=>{
+router.delete('/deletepost',login_authorize,(req,res)=>{
     Post.findOne({_id:req.body.post_id}).exec((err,thepost)=>{//pass the id of the post to be deleted through the front end
         if(err || !thepost){
             return res.status(422).json({error:err});
