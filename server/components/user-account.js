@@ -30,7 +30,7 @@ router.get('/signup', (req, res) => {
 });
 
 router.get('/login',(req,res)=>{
-    res.sendFile(path.join(__dirname,"../client/public/index.html"));
+    res.sendFile(path.join(__dirname,"../../client/public/index.html"));
 });
 
 router.post("/signup", (req, res) => {
@@ -89,8 +89,8 @@ router.post("/signup", (req, res) => {
             else{
                 console.log("This email is already in use.");
                 res.json({err:'Email already in use.'});
-                // TODO : redirect to the login page
             }
+            // TODO : redirect to the login page
         })
     }
 });

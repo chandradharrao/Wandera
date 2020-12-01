@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
+import { useHistory } from 'react-router-dom';
 import NavbarMain from "../components/NavbarMain";
 import "./Signup.css";
 
 const Signup = () => {
+    const history = useHistory();
     const [fname, setFName] = useState("");
     const [lname, setLName] = useState("");
     const [email, setEmail] = useState("");
@@ -22,17 +24,21 @@ const Signup = () => {
                 },
                 body: JSON.stringify({
                     wanderer: {
-                        fname: "",
-                        lname: "",
-                        email: "",
-                        dob: "",
-                        username: "",
-                        password: ""
+                        fname,
+                        lname,
+                        email,
+                        dob,
+                        username,
+                        password
                     }
                 })
             }).then(res => res.json())
             .then(data => {
-                console.log(data)
+                if(data.error) {
+                    console.log("Error!", data);
+                } else {
+                    history.push('/login');
+                }
             })
         }
     };
@@ -44,7 +50,7 @@ const Signup = () => {
                 <div className="signup-contents">
                     <div className="signup-container">
                         <h1>Create an Account</h1>
-                        <form action="http://localhost:3001/signup" class="signup-form" method="post">
+                        <form class="signup-form">
                             <label for="fname">First Name</label>
                             <input type="text" name="fname" value={fname} onChange={(e) => setFName(e.target.value)} required /><br/>
                             <label for="lname">Last Name</label>
