@@ -3,14 +3,14 @@ const CONSTS = require('../components/constants');
 const mongoose = require('mongoose');
 const User = require('../models/wanderer');
 
-//connect to mongoose
-mongoose.connect("mongodb://localhost:27017/usersdb",{ useUnifiedTopology: true, useNewUrlParser: true });
+// Connect to mongoose
+mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
 
-//since mongoose promise is deprecated,lets override it node js promise
+// Since mongoose promise is deprecated,lets override it node js promise
 mongoose.Promise = global.Promise;
 
 //verify the token wheather the logged in user is same as that the one who is making the request for the resource ie wheather its the same token we gave
-module.exports = (req,res,next)=>{
+module.exports = (req,res,next) => {
     //the req header's authorization would contain the jwt access token
     const authHeader = req.header('Authorization');
     console.log(`The auth head is ${authHeader}`);

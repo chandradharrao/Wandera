@@ -53,7 +53,7 @@
   box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.253);
 }
 
-.signup-form input[type="submit"] {
+.signup-form button {
   width: 100%;
   padding: 0.1em;
   border: none;
@@ -70,7 +70,7 @@
   cursor: pointer;
 }
 
-.signup-form input[type="submit"]:hover {
+.signup-form button:hover {
   box-shadow: 0 0 15px 4px rgba(163, 163, 163, 0.781);
   background-color: #5a5959;
   color: aliceblue;
