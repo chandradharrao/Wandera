@@ -6,36 +6,40 @@ const FollowUnfollowSchema = require('./follow-unfollow-user');
 const userSchema = new mongoose.Schema({
     profile_pic:{
         type:String,
-        default:''//put in the default profile pic url
+        default: "../../client/src/images/profilepic.jpg"
     },
     first_name:{
         type:String,
-        required:true
+        required: true
     },
     last_name:{
         type:String,
-        required:true
-    },
-    password:{
-        type:String,
-        required:true
+        required: true
     },
     email:{
         type:String,
-        required:true
+        required: true
+    },
+    dob: {
+        type:Date,
+        required: true
     },
     username:{
         type:String,
-        required:true
+        required: true
+    },
+    password:{
+        type:String,
+        required: true
     },
     about_me:{
         type:String,
-        default:"This user preferes to keep an air of mystery..."
+        default: "This user prefers to keep an air of mystery..."
     },
-    followers:[{type:FollowUnfollowSchema}],//users who follow you
-    following:[{type:FollowUnfollowSchema}]//users you follow
+    followers:[{type:FollowUnfollowSchema}], // Users who follow you
+    following:[{type:FollowUnfollowSchema}]  // Users you follow
 })
 
-//Export the model so that data of userSchema type are saved in WandererCollection
+// Export the model so that data of userSchema type is saved in WandererCollection
 const User = mongoose.model("WandererCollection", userSchema);
 module.exports = User;

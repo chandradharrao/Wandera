@@ -4,7 +4,7 @@ const CONSTS = {
                      useNewUrlParser: true,
                      useUnifiedTopology: true
                   },
-   PORT : 3000,
+   PORT : 3001,
    JWT_SECRET : 'xman6969FortniteandBatman'
    }
 

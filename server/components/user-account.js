@@ -1,78 +1,76 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const path = require("path");
 const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
+
+/* Import the user model as User */
+const User = require('../models/wanderer');
+const login_authorize = require('../middleware/login-authorize');
 const CONSTS = require('./constants');
-const login_authorize = require('./middleware/login_authorize');
 
-//importing the user model as User
-const User = require('./models/wanderer');
-const mongoose = require('mongoose');
-
-//router for accessing proteted resource like his feed
-router.get('/protected',login_authorize,(req,res)=>{//this route has to pass through the middle wear
-    res.json({message:"Hi user!This is your home page!"});
-})
-
-//connect to mongoose
-mongoose.connect("mongodb://localhost:27017/usersdb",{ useUnifiedTopology: true, useNewUrlParser: true });
-
-//since mongoose promise is deprecated,lets override it node js promise
+/* Connect to mongoose, override depracated
+ Promise with the global one */
+mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
 mongoose.Promise = global.Promise;
+
+/* Router for accessing protected resources like the main feed */
+/* Requests pass through the middleware via this route */
+router.get('/protected', login_authorize, (req, res) => {
+    res.json({message: "Welcom back! This is your home page!"});
+});
 
 router.get('/', (req, res) => {
     res.send("<h1>Wandera HomePage</h1>");
 })
 
-router.get('/signup',(req, res) => {
-    res.sendFile(path.join(__dirname, "../client", "/common/signup.html"));
+router.get('/signup', (req, res) => {
+    res.sendFile(path.join(__dirname, "../../client/public/index.html"));
 });
 
 router.get('/login',(req,res)=>{
-    res.sendFile(path.join(__dirname,"../client","/common/login.html"))
+    res.sendFile(path.join(__dirname,"../../client/public/index.html"));
 });
 
-router.post("/signup-info", (req, res) => {
+router.post("/signup", (req, res) => {
     var firstname = req.body.fname;
     var lastname = req.body.lname;
     var email = req.body.email;
-    var password = req.body.password;
-    var confirmPassword = req.body.confirm_password;
+    var dob = req.body.dob;
     var username = req.body.username;
+    var password = req.body.password;
 
     if (!firstname || !lastname || !email || !username) {
         res.status(422).json({error : "Please fill in all the details."});
-    }
-    else if(password!=confirmPassword){
-        res.status(422).json({error : "Passwords Do not match."});
     } 
     else {
-        //check if email already exists
+        /* Check if email is already in use */
         User.findOne({email:email},(err,data)=>{
             if(err){
                 return res.json({error:err});
             }
             if(!data){
-                console.log("No user with this email till now");
-
-                //check if user name aleady exists
+                console.log("No user with this email exists yet.");
+                /* Check if user name is already in use */
                 User.findOne({username:username},(err,foundUser)=>{
                     if(err){
                         return res.json({error:err});
                     }
                     if(!foundUser){
                         console.log("No user with this username till now");
-                        //hashing the password before saving
-                        bcrypt.hash(password,12).then(hashedPassword=>{
-                            //create the new user obj and save it simultaneously to the WandereCollection and returns a promise since its async
+                        /* Hashing the password before saving */
+                        bcrypt.hash(password, 12).then(hashedPassword => {
+                            /* Create the new user object, save it simultaneously to the 
+                            WandererCollection and return a promise, since it's async */
                             User.create({
+                                dob:dob,
                                 email:email,
                                 password:hashedPassword,
                                 username:username,
                                 last_name:lastname,
                                 first_name:firstname
-                            }).then((savedData)=>{//once its saved,the saved data is returned back
+                            }).then((savedData) => {            // Once it's saved, the saved data is returned
                                 console.log("Data saved");
                                 res.json({message : savedData});
                             }).catch(err=>{
@@ -83,25 +81,25 @@ router.post("/signup-info", (req, res) => {
                         })
                     }
                     else{
-                        console.log("User with this username exists!!");
-                        res.json({err:'user with this username already exists'});
+                        console.log("Username is already in use.");
+                        res.json({err:'Username is already in use.'});
                     }
                 })
             }
             else{
-                console.log("User with this email exists!!");
-                res.json({err:'user already exists'});
-                //redirect to the login page
+                console.log("This email is already in use.");
+                res.json({err:'Email already in use.'});
             }
+            // TODO : redirect to the login page
         })
     }
 });
 
-router.post('/login-info',(req,res)=>{
+router.post('/login',(req,res)=>{
     const uName = req.body.username;
     const password = req.body.password;
 
-    //check if user has entered all field
+    // Check if user has entered all field
     if(!uName && password){
         return res.status(422).json({error:"Enter a username"});
     }
@@ -112,7 +110,7 @@ router.post('/login-info',(req,res)=>{
         return res.status(422).json({error:"Enter both Username and password"});
     }
 
-    //if he as then create the the query obj
+    // If so, create the query object
     const loginDetails = {
         username:uName,
         password:password
@@ -145,7 +143,7 @@ router.post('/login-info',(req,res)=>{
     }).catch((err)=>{
         console.log(err);
     })
-})
+});
 
 router.post('/logout',(req,res)=>{
     req.user = '';
@@ -153,5 +151,6 @@ router.post('/logout',(req,res)=>{
         return res.status(200).json({message:"You have been logged out!"});
     }
     return res.status(422).json({error:"Not able to log out"});
-})
+});
+
 module.exports = router;

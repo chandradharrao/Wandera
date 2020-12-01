@@ -2,10 +2,10 @@ const path = require("path");
 const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
 const CONSTS = require('./constants');
-const login_authorize = require('./middleware/login_authorize');
+const login_authorize = require('../middleware/login-authorize');
 
 //importing the user model as User
-const User = require('./models/wanderer');
+const User = require('../models/wanderer');
 const mongoose = require('mongoose');
 const router = require("./user-account");
 
