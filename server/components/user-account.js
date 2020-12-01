@@ -4,14 +4,14 @@ const path = require("path");
 const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
 const CONSTS = require('./constants');
-const LoginAuth = require('./MiddleWears/LoginAuth');
+const login_authorize = require('./middleware/login_authorize');
 
 //importing the user model as User
 const User = require('./models/wanderer');
 const mongoose = require('mongoose');
 
 //router for accessing proteted resource like his feed
-router.get('/protected',LoginAuth,(req,res)=>{//this route has to pass through the middle wear
+router.get('/protected',login_authorize,(req,res)=>{//this route has to pass through the middle wear
     res.json({message:"Hi user!This is your home page!"});
 })
 

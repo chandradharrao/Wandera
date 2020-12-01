@@ -2,7 +2,7 @@ const path = require("path");
 const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
 const CONSTS = require('./constants');
-const LoginAuth = require('./MiddleWears/LoginAuth');
+const login_authorize = require('./middleware/login_authorize');
 
 //importing the user model as User
 const User = require('./models/wanderer');
@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 const router = require("./user-account");
 
 //router for accessing proteted resource like his feed
-router.get('/protected',LoginAuth,(req,res)=>{//this route has to pass through the middle wear
+router.get('/protected',login_authorize,(req,res)=>{//this route has to pass through the middle wear
     res.json({message:"Hi user!This is your home page!"});
 })
 
@@ -20,7 +20,7 @@ mongoose.connect("mongodb://localhost:27017/usersdb",{ useUnifiedTopology: true,
 //since mongoose promise is deprecated,lets override it node js promise
 mongoose.Promise = global.Promise;
 
-router.put('/follow',LoginAuth,(req,res)=>{//the logged in user(LoginAuth) on clicking the follow button of a particular user profile will supply the id of the profile clicked.Hence the followers array of the profile clicked should be populated.Also the following array of the user who clicked the follow button should be populated.
+router.put('/follow',login_authorize,(req,res)=>{//the logged in user(login_authorize) on clicking the follow button of a particular user profile will supply the id of the profile clicked.Hence the followers array of the profile clicked should be populated.Also the following array of the user who clicked the follow button should be populated.
     var Celebrity;
     var Me;
     
@@ -59,7 +59,7 @@ router.put('/follow',LoginAuth,(req,res)=>{//the logged in user(LoginAuth) on cl
     })
 })
 
-router.put('/unfollow',LoginAuth,(req,res)=>{//the logged in user(LoginAuth) on clicking the unfollow button of a particular user profile will supply the id of the profile clicked.Hence the unfollowers array of the profile clicked should be depopulated.Also the following array of the user who clicked the follow button should be depopulated.
+router.put('/unfollow',login_authorize,(req,res)=>{//the logged in user(login_authorize) on clicking the unfollow button of a particular user profile will supply the id of the profile clicked.Hence the unfollowers array of the profile clicked should be depopulated.Also the following array of the user who clicked the follow button should be depopulated.
     var Celebrity;
     var Me;
     var theOrdinaryMe = {
@@ -103,7 +103,7 @@ router.get("/get-all-users",(req,res)=>{
 });
 
 //ony for testing
-router.get("/whoamI",LoginAuth,(req,res)=>{
+router.get("/whoamI",login_authorize,(req,res)=>{
     return res.json({message:req.user});
 })
 
