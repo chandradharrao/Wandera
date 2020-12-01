@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const path = require("path");
-const login_authorize = require('./middleware/login_authorize');
+const login_authorize = require('../middleware/login-authorize');
 
 //importing the user model as User
-const Post = require('./models/post');
+const Post = require('../models/post');
 const mongoose = require('mongoose');
 
 //connect to mongoose

@@ -5,10 +5,10 @@ const CONSTS = require("./components/constants");
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());
-app.use(require("./user-account"));
-app.use(require("./user-posts"));
-app.use(require("./public-profiles"));
-app.use(require("./follow-unfollow"));
+app.use(require("./components/user-account"));
+app.use(require("./components/user-posts"));
+app.use(require("./components/public-profiles"));
+app.use(require("./components/follow-unfollow"));
 
 app.listen(CONSTS.PORT, () => {
     console.log(`Listening at port ${CONSTS.PORT}...`);

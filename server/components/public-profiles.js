@@ -3,8 +3,8 @@ const router = express.Router();
 const path = require("path");
 
 //importing the user model as User
-const User = require('./models/wanderer');
-const Post = require('./models/post');
+const User = require('../models/wanderer');
+const Post = require('../models/post');
 const mongoose = require('mongoose');
 
 //connect to mongoose

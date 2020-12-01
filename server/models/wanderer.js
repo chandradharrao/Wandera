@@ -24,10 +24,10 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    followers:[{type:FollowUnfollowSchema}],//users who follow you
-    following:[{type:FollowUnfollowSchema}]//users you follow
+    followers:[{type:FollowUnfollowSchema}], // Users who follow you
+    following:[{type:FollowUnfollowSchema}]  // Users you follow
 })
 
-//Export the model so that data of userSchema type are saved in WandererCollection
+// Export the model so that data of userSchema type is saved in WandererCollection
 const User = mongoose.model("WandererCollection", userSchema);
 module.exports = User;

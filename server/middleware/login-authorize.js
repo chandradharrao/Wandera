@@ -1,6 +1,5 @@
 const JWT = require('jsonwebtoken');
-const { JWT_SECRET } = require('../constants');
-const CONSTS = require('../constants');
+const CONSTS = require('../components/constants');
 const mongoose = require('mongoose');
 const User = require('../models/wanderer');
 
@@ -20,7 +19,7 @@ module.exports = (req,res,next)=>{
     }
     const assignedToken = authHeader.split(' ')[1];//of the form Bearer 23eg#45ghk
     //check if the token is valid
-    JWT.verify(assignedToken,JWT_SECRET,(err,decodedToken)=>{//assigned token is the token assignd when the user logs in and we check if that user is present in the db
+    JWT.verify(assignedToken,CONSTS.JWT_SECRET,(err,decodedToken)=>{//assigned token is the token assignd when the user logs in and we check if that user is present in the db
         if(err){
             res.status(401).json({error:'You must be logged in'});
         }
