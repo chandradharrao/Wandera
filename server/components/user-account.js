@@ -95,40 +95,46 @@ router.post("/signup", (req, res) => {
     }
 });
 
-router.post('/login',(req,res)=>{
-    const uName = req.body.username;
+router.post('/login', (req, res) => {
+    const username = req.body.username;
     const password = req.body.password;
 
-    // Check if user has entered all field
-    if(!uName && password){
-        return res.status(422).json({error:"Enter a username"});
-    }
-    else if(uName && !password){
-        return res.status(422).json({error:"Enter a Password"});
-    }
-    else if(!uName && ! password){
-        return res.status(422).json({error:"Enter both Username and password"});
+    // Check if the user has entered all given fields
+    if (!username && password){
+        return res.status(422).json({error:"Enter the username."});
+    } else if (username && !password){
+        return res.status(422).json({error:"Enter the password."});
+    } else if (!username && ! password){
+        return res.status(422).json({error:"Enter both the username and password."});
     }
 
     // If so, create the query object
     const loginDetails = {
-        username:uName,
+        username:username,
         password:password
     };
 
-    console.log(`I am tryina find ${loginDetails.username} in the db`);
+    console.log(`Looking for the user, ${loginDetails.username} in the database...`);
 
-    User.findOne({username:loginDetails.username}).then((foundData)=>{//this promise returns the found data
-        if(foundData){//if the found data is not empty means user already present,now we need to compare the password already in db and the password he is entering
-            console.log("User with this email exists in db!");
-            bcrypt.compare(loginDetails.password,foundData.password).then((doesMatch)=>{//this promise waits for getting the compare boolean and then executes async
-                if(doesMatch){//if the passwords are the same
-                    console.log("Redirecting to homepage...!!");
-                    /* JWT will be used to verify/authenticate users and identify them.JWT have the details unlike session ids that would have the reference to the detaisls tored in the server reducing the load.They are signed to prevent users from manipulating.We use jwt so that users can access only their feed or posts(protected resources) and not others. */
-                    const token = JWT.sign({_id:foundData._id},CONSTS.JWT_SECRET);//replace the id of db with the signed token
-                    res.json({token : token});//this is the token gievn to the user upon logging in successfully,this will be used to keep track of the user and allow him to access protected resources
-                }
-                else{
+    /* This promise returns the user with the entered username, if found (data not empty) */
+    User.findOne({username: loginDetails.username}).then((foundData)=>{
+        // Compare the password entered with that in the database
+        if (foundData) {
+            console.log("User with this email exists in the database.");
+            // This promise waits to get the result of the compare boolean and then executes async
+            bcrypt.compare(loginDetails.password, foundData.password).then((doesMatch) => {
+                // If the passwords are the same
+                if(doesMatch){
+                    console.log("Success! Redirecting to user dashboard...");
+                    /* JWT used to verify/authenticate users and identify them.
+                    Has details unlike session IDs that would have the reference to the details stored in the server reducing the load.
+                    They are signed to prevent users from manipulating.
+                    We use JWT so that users can access only their feed or posts(protected resources) and not others. */
+                    const token = JWT.sign({_id: foundData._id},CONSTS.JWT_SECRET);     // Replace the id of the database with the signed token
+                    /* This is the token given to the user upon logging in successfully,
+                    this will be used to keep track of the user and allow him to access protected resources */
+                    res.json({token : token}); 
+                } else {
                     console.log("Your username and password didnt match!");
                     return res.status(422).json({message:'Your username and password didnt match'})
                 }
@@ -138,7 +144,7 @@ router.post('/login',(req,res)=>{
         }
         else{
             res.json({error:'Please signup as you dont have an account yet!'});
-            //signu page rediection
+            //signup page rediection
         }
     }).catch((err)=>{
         console.log(err);

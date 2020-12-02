@@ -1,9 +1,25 @@
+/* eslint-disable no-useless-escape */
 import React, {useState} from 'react';
 import { useHistory } from 'react-router-dom';
 import NavbarMain from "../components/NavbarMain";
 import "./Signup.css";
 
+const moment = window.moment;
+
+function validate(date) {
+    var eighteenYearsAgo = moment().subtract(18, "years");
+    var birthday = moment(date);
+
+    if (!birthday.isValid())
+        return 0;    
+    else if (eighteenYearsAgo.isAfter(birthday))
+        return 1;    
+    else
+        return 0;    
+}
+
 const Signup = () => {
+    const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const history = useHistory();
     const [fname, setFName] = useState("");
     const [lname, setLName] = useState("");
@@ -14,33 +30,47 @@ const Signup = () => {
     const [confirmPassword, setConfirm] = useState("");
 
     const PostData = () => {
+        if(!re.test(email)){
+            alert("Invalid email address. Please enter a valid email.");
+            return;
+        }
+        if (!validate(dob)) {
+            alert("Sorry! You've got to be older than 18 years.");
+            return;
+        }
+        if (password.length < 7) {
+            alert("Password too short. Enter a stronger password.");
+            return;
+        }
         if (password !== confirmPassword) {
             alert("Passwords don't match");
+            return;
         } else {
-            fetch('http://localhost:3001/signup', {
+            fetch('/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    wanderer: {
-                        fname,
-                        lname,
-                        email,
-                        dob,
-                        username,
-                        password
-                    }
+                    fname,
+                    lname,
+                    email,
+                    dob,
+                    username,
+                    password
                 })
-            }).then(res => res.json())
-            .then(data => {
+            }).then(data => {
                 if(data.error) {
                     console.log("Error!", data);
                 } else {
+                    alert("Successfully created an account!");
                     history.push('/login');
                 }
-            })
-        }
+            }).then(res => res.json())
+            .catch(err => {
+                console.log(err);
+            });
+        };
     };
     
     return (
@@ -50,7 +80,7 @@ const Signup = () => {
                 <div className="signup-contents">
                     <div className="signup-container">
                         <h1>Create an Account</h1>
-                        <form class="signup-form">
+                        <div className="signup-form">
                             <label for="fname">First Name</label>
                             <input type="text" name="fname" value={fname} onChange={(e) => setFName(e.target.value)} required /><br/>
                             <label for="lname">Last Name</label>
@@ -66,7 +96,7 @@ const Signup = () => {
                             <label for="confirm_password">Confirm Password</label>
                             <input type="password" name="confirm_password" value={confirmPassword} onChange={(e) => setConfirm(e.target.value)} required /><br/>
                             <button class="form-submit" onClick={() => PostData()}>SIGN UP</button>
-                        </form>
+                        </div>
                         <div className="have-account">
                             Already have an account?
                             <a href="/login">Login</a>
