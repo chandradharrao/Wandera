@@ -1,5 +1,3 @@
-@import "../font-styling.css";
-
 .signup-page {
   background-image: url("../images/Maps.jpg");
   width: 100%;
@@ -21,14 +19,13 @@
   font-family: Cormorant_Garamond;
   font-weight: normal;
   font-style: normal;
-  font-size: 1.25vw;
   color: #424242;
 }
 
 .signup-container h1 {
   font-family: Cinzel;
   font-weight: normal;
-  font-size: 2.5vw;
+  font-size: 2em;
   text-align: center;
   color: #333232;
 }
@@ -36,14 +33,17 @@
 .signup-form input[type="password"],
 .signup-form input[type="date"],
 .signup-form input[type="text"] {
+  outline: none;
   width: 100%;
-  padding: 0.8em;
+  padding: 0.5em 1em;
   border: none;
   border-bottom: 0.5px solid #c5c5c5;
   box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
   margin: 0.9em 0;
   box-sizing: border-box;
   border-radius: 1em;
+  font-family: Quicksand;
+  font-size: 1em;
 }
 
 .signup-form input[type="password"]:hover,
@@ -51,6 +51,10 @@
 .signup-form input[type="text"]:hover {
   border-bottom: 0.5px solid #bdbdbd;
   box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.253);
+}
+
+.signup-form label {
+  font-size: 1.2em;
 }
 
 .signup-form button {
@@ -64,7 +68,7 @@
   border-radius: 1em;
   font-family: Cinzel;
   font-weight: normal;
-  font-size: 27px;
+  font-size: 1.6em;
   color: #cfcfcf;
   background-color: #333232;
   cursor: pointer;
@@ -79,14 +83,14 @@
 .have-account {
   margin-top: 1em;
   margin-bottom: 0.5em;
-  font-size: 30px;
+  font-size: 1.7em;
   text-align: center;
   font-weight: bold;
 }
 
 .have-account a {
   padding: 0.3em;
-  margin: 1em;
+  margin-left: 1em;
   border: none;
   border-bottom: 0.5px solid #c5c5c5;
   box-shadow: 0 0 15px 4px rgba(163, 163, 163, 0.534);
@@ -94,7 +98,7 @@
   border-radius: 1em;
   font-family: Cinzel;
   font-weight: normal;
-  font-size: 20px;
+  font-size: 0.8em;
   color: #cfcfcf;
   background-color: #333232;
 }
@@ -103,4 +107,19 @@
   box-shadow: 0 0 15px 4px rgba(163, 163, 163, 0.781);
   background-color: #5a5959;
   color: aliceblue;
+}
+
+@media screen and (max-width: 1129px) {
+  .signup-container {
+    width: 50%;
+    margin: auto;
+  }
+}
+
+@media screen and (max-width: 866px) {
+  .signup-container {
+    background: #f8f7f7;
+    width: 100%;
+    margin: auto;
+  }
 }

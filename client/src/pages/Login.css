@@ -1,5 +1,3 @@
-@import "../font-styling.css";
-
 .login-landing {
   width: 100%;
   height: 100vh;
@@ -25,7 +23,7 @@
   font-family: Cormorant_Garamond;
   font-weight: normal;
   font-style: normal;
-  font-size: 1.25vw;
+  font-size: 1em;
   color: #424242;
   border-radius: 2em;
 }
@@ -33,14 +31,14 @@
 .login-container h1 {
   font-family: Cinzel;
   font-weight: normal;
-  font-size: 2.5vw;
+  font-size: 2.1em;
   text-align: center;
   color: #333232;
 }
 
 .login-form input[type="password"],
-.login-form input[type="date"],
 .login-form input[type="text"] {
+  outline: none;
   width: 100%;
   padding: 0.8em;
   border: none;
@@ -49,16 +47,17 @@
   margin: 0.9em 0;
   box-sizing: border-box;
   border-radius: 1em;
+  font-family: Quicksand;
+  font-size: 1em;
 }
 
 .login-form input[type="password"]:hover,
-.login-form input[type="date"]:hover,
 .login-form input[type="text"]:hover {
   border-bottom: 0.5px solid #bdbdbd;
   box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.253);
 }
 
-.login-form input[type="submit"] {
+.login-form button {
   width: 100%;
   padding: 0.1em;
   border: none;
@@ -69,14 +68,29 @@
   border-radius: 1em;
   font-family: Cinzel;
   font-weight: normal;
-  font-size: 27px;
+  font-size: 1.8em;
   color: #cfcfcf;
   background-color: #333232;
   cursor: pointer;
 }
 
-.login-form input[type="submit"]:hover {
+.login-form button:hover {
   box-shadow: 0 0 15px 4px rgba(163, 163, 163, 0.781);
   background-color: #5a5959;
   color: aliceblue;
+}
+
+@media screen and (max-width: 1129px) {
+  .login-container {
+    width: 50%;
+    margin: auto;
+  }
+}
+
+@media screen and (max-width: 866px) {
+  .login-container {
+    background: #f8f7f7;
+    width: 75%%;
+    margin: auto;
+  }
 }
