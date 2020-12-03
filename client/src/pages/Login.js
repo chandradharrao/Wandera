@@ -12,21 +12,27 @@ const Login = () => {
         fetch('/login', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                //in the header of request we will send the token so that we can get authorized using jwt authorization
+                "Authorization":"Bearer " + localStorage.getItem("jwt")
             },
             body: JSON.stringify({
                 username,
                 password
             })
-        }).then(data => {
+        }).then(res => res.json()).then(data => {
             if(data.error) {
                 console.log("Error!", data);
             } else {
+                console.log(`The data recievied is ${data},it has the token ${data.token} and the user data ${data.user}`);
+                //the backend sends the token when a user logs in along with the user data in the res obj.We need to store it in the local cache to be used while making requests to protected resources
+                localStorage.setItem("jwt",data.token);
+                localStorage.setItem("user",JSON.stringify(data.user));//since we can store only strings in the local storeage key value pair we need to stringify the json user details
                 history.push('/account');
             }
-        }).then(res => res.json())
+        })
         .catch(err => {
-            console.log(err);
+            alert(err);
         });
     };
 
