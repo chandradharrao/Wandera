@@ -114,10 +114,9 @@ router.post('/login', (req, res) => {
         password:password
     };
 
-    console.log(`Looking for the user, ${loginDetails.username} in the database...`);
-
     /* This promise returns the user with the entered username, if found (data not empty) */
     User.findOne({username: loginDetails.username}).then((foundData)=>{
+        console.log(`Looking for the user,${loginDetails.username} in database...`);
         // Compare the password entered with that in the database
         if (foundData) {
             console.log("User with this email exists in the database.");
@@ -143,7 +142,8 @@ router.post('/login', (req, res) => {
             })
         }
         else{
-            res.json({error:'Please signup as you dont have an account yet!'});
+            console.log("User Not found in the database..!")
+            res.status(404).json({error:'Please signup as you dont have an account yet!'});
             //signup page rediection
         }
     }).catch((err)=>{

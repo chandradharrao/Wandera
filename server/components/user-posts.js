@@ -26,7 +26,7 @@ router.post('/createpost',login_authorize,(req,res)=>{
     const body = req.body.body;
     console.log(`The title and body are ${req.body.title} and ${req.body.body} and the url is  ${req.body.photo}`);
 
-    if(!title || !body){
+    if(!title || !body || !req.body.photo){
         return res.status(422).json({error:"Please all required fields"});
     }
     console.log(`The req.user is ${req.user}`);
