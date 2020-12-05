@@ -115,38 +115,51 @@ router.post('/login', (req, res) => {
     };
 
     /* This promise returns the user with the entered username, if found (data not empty) */
-    User.findOne({username: loginDetails.username}).then((foundData)=>{
-        console.log(`Looking for the user,${loginDetails.username} in database...`);
+    User.findOne({username: loginDetails.username})
+    .then((foundData) => {
+        console.log(`Looking for the user, ${loginDetails.username} in database...`);
         // Compare the password entered with that in the database
         if (foundData) {
             console.log("User with this email exists in the database.");
-            // This promise waits to get the result of the compare boolean and then executes async
-            bcrypt.compare(loginDetails.password, foundData.password).then((doesMatch) => {
-                // If the passwords are the same
-                if(doesMatch){
+
+            /* This promise waits to get the result of 
+            the compare boolean and then executes async */
+            bcrypt.compare(loginDetails.password, foundData.password)
+            .then((doesMatch) => {
+                
+                // If the password entered matches the one in the database
+                if(doesMatch) {
                     console.log("Success! Redirecting to user dashboard...");
+                    
                     /* JWT used to verify/authenticate users and identify them.
-                    Has details unlike session IDs that would have the reference to the details stored in the server reducing the load.
+                    Has details unlike session IDs that would have the reference
+                    to the details stored in the server reducing the load.
                     They are signed to prevent users from manipulating.
-                    We use JWT so that users can access only their feed or posts(protected resources) and not others. */
-                    const token = JWT.sign({_id: foundData._id},CONSTS.JWT_SECRET);     // Replace the id of the database with the signed token
+                    We use JWT so that users can access only their feed 
+                    or posts(protected resources) and not others. */
+
+                    // Replace the id of the database with the signed token
+                    const token = JWT.sign({_id: foundData._id}, CONSTS.JWT_SECRET);    
+
                     /* This is the token given to the user upon logging in successfully,
                     this will be used to keep track of the user and allow him to access protected resources */
                     res.json({token : token}); 
                 } else {
-                    console.log("Your username and password didnt match!");
-                    return res.status(422).json({message:'Your username and password didnt match'})
+                    console.log("Your username and password didn't match!");
+                    return res.status(422).json({message: "Your username and password didn't match"})
                 }
-            }).catch((err)=>{
+            })
+            .catch((err) => {
                 console.log(err);
             })
+        } else {
+            console.log("User login information not found in the database.");
+            res.status(404).json({
+                error: 'This account does not exist. Please sign up to create an account.'
+            });
         }
-        else{
-            console.log("User Not found in the database..!")
-            res.status(404).json({error:'Please signup as you dont have an account yet!'});
-            //signup page redirection
-        }
-    }).catch((err)=>{
+    })
+    .catch((err)=>{
         console.log(err);
     })
 });

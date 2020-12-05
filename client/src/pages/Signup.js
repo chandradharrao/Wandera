@@ -59,14 +59,16 @@ const Signup = () => {
                     username,
                     password
                 })
-            }).then(data => {
+            })
+            .then(data => {
                 if(data.error) {
                     console.log("Error!", data);
                 } else {
                     alert("Successfully created an account!");
                     history.push('/login');
                 }
-            }).then(res => res.json())
+            })
+            .then(res => res.json())
             .catch(err => {
                 console.log(err);
             });

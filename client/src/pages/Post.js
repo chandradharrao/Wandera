@@ -8,7 +8,6 @@ import "./Post.css";
 reference the image in order to display it on webpages */
 
 /* Cloudinary auxiliary data */
-const CL_CLOUD_NAME = "chandracloudinarystorage123";
 const CL_PRESET = "wandera";
 const CL_UPLOAD_URL = "https://api.cloudinary.com/v1_1/chandracloudinarystorage123/image/upload";
 
