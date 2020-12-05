@@ -17,7 +17,7 @@ const Post = () => {
     const [heading, setHeading] = useState("");
     const [body, setBody] = useState("");
     const [image, setImage] = useState("");
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     /* Make the post request to create post on the server only 
     when the image is successfully posted on the cloud, and the
@@ -35,21 +35,22 @@ const Post = () => {
                     body: body,
                     photo: image
                 })
-            }).then(res => res.json()).
-            then(data => {
+            }).then(res => res.json())
+            .then(data => {
                 if(data.error) {
-                    console.log("Error! ${data.error}");
+                    console.log(`Error! ${data.error}`);
                 }
                 else {
                     history.push('/account')
                 }
-            }).then(res => res.json())
+            })
+            .then(res => res.json())
             .catch((err) => {
                 console.group(err)
             });
         }
-        /* This effect will kick in only 
-        when the url of image is recieved */
+    /* This effect will kick in only 
+       when the url of image is recieved */
     },[image, body, history, heading])
 
     const PostAlbum = async (e) => {
@@ -85,7 +86,14 @@ const Post = () => {
                             <span>Upload Image</span>
                             <input type="file" onChange={(e) => {setImage(e.target.files[0])}} required/>
                         </div>
-                        <button className="post-button" onClick={(e) => {e.preventDefault();PostAlbum()}}>POST ALBUM</button>
+                        <button 
+                        className="post-button" 
+                        onClick={
+                            (e) => {
+                                e.preventDefault();
+                                PostAlbum()
+                        }
+                        }>POST ALBUM</button>
                     </div>
                 </form>
             </div>

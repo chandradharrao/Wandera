@@ -53,7 +53,7 @@ router.get('/viewallposts',(req,res)=>{
     })
 });
 
-//get the posts posted by the users whom I follow
+// Get posts of users I'm following
 router.get("/viewmyfeed",login_authorize,(req,res)=>{
     //Out of all the posts,find those posts that are posted by users presents in the following array of the user loggd in
     Post.find({postedByUName:{$in:req.user.following.follow_unfollowUsername}}).then((docs)=>{//this is similar to "if 3 in [1,2,3] of python",$in matches postedBy to those fields present in req.users.folowing,this can be done with the help of a for loop too.
