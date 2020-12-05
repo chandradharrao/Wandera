@@ -6,6 +6,7 @@ const login_authorize = require('../middleware/login-authorize');
 //importing the user model as User
 const Post = require('../models/post');
 const mongoose = require('mongoose');
+const User = require('../models/wanderer');
 
 //connect to mongoose
 mongoose.connect("mongodb://localhost:27017/usersdb",{ useUnifiedTopology: true, useNewUrlParser: true });
@@ -161,6 +162,15 @@ router.delete('/deletepost',login_authorize,(req,res)=>{
                 })
             })
         }
+    })
+})
+
+router.post('/search-users',login_authorize,(req,res)=>{
+    let searchPattern = new RegExp('^' + req.body.query); //find all strings that start with the query given by user
+    User.find({username:{$regex : searchPattern}}).then((foundData)=>{
+        res.json({user:foundData.username});
+    }).catch((err)=>{
+        console.log(err);
     })
 })
 
