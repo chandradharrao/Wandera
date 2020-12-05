@@ -53,3 +53,12 @@
 .main-post-content input[type="text"]:focus {
   border: 0.5px solid #0d0838;
 }
+
+.main-icons img {
+  max-width: 2em;
+  max-height: 2em;
+}
+
+.main-icons {
+  margin: 1em auto 0 2em;
+}
