@@ -42,7 +42,7 @@ const Login = () => {
                 as key value pairs, we stringify the json user details */
             localStorage.setItem("user", JSON.stringify(file.user));
             dispatch({type: "USER", payload: file.user})
-            // history.push('/main');
+            history.push('/main');
         }
     };
 
