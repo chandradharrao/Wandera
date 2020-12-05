@@ -35,7 +35,7 @@ const Post = () => {
                 else{
                     history.push('/account')
                 }
-            }).then(res=>alert(typeof res)).catch((err)=>{
+            }).then(res=>res.json()).catch((err)=>{
                 console.group(err)
             });
         }
