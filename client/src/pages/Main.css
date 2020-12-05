@@ -1,3 +1,64 @@
 .main-page {
+  width: 100%;
+  margin: auto;
+}
+
+.main-post-container {
+  width: 45%;
+  border: 1px solid rgb(221, 221, 221);
+  box-shadow: 0 0 15px 3px rgba(0, 0, 0, 0.253);
+  border-radius: 0.5%;
+  padding: 0;
+  margin: 0 auto 3em auto;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+.user-main-info {
+  margin: 0.5em 0.5em 0.5em 1em;
+  padding: 0;
+  font-weight: bold;
+  font-family: "Cormorant_Garamond";
+  font-size: 1.75em;
+}
+
+.user-main-image {
+  margin: auto;
+  display: block;
+  max-height: auto;
+  max-width: 100%;
   width: auto;
+  height: auto;
+}
+
+.main-post-content {
+  margin: 0 2em 1.5em 2em;
+  font-size: 1.2em;
+}
+
+.main-post-content input[type="text"] {
+  outline: none;
+  width: 100%;
+  padding: 0.5em 1em;
+  border: none;
+  box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.253);
+  margin: 0.9em 0;
+  box-sizing: border-box;
+  border-radius: 1em;
+  font-family: Quicksand;
+  font-size: 1em;
+}
+
+.main-post-content input[type="text"]:focus {
+  border: 0.5px solid #0d0838;
+}
+
+.main-icons img {
+  max-width: 2em;
+  max-height: 2em;
+}
+
+.main-icons {
+  margin: 1em auto 0 2em;
 }

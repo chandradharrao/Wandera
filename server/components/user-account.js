@@ -21,17 +21,17 @@ router.get('/protected', login_authorize, (req, res) => {
     res.json({message: "Welcom back! This is your home page!"});
 });
 
-router.get('/', (req, res) => {
-    res.send("<h1>Wandera HomePage</h1>");
-})
+// router.get('/', (req, res) => {
+//     res.send("<h1>Wandera HomePage</h1>");
+// })
 
-router.get('/signup', (req, res) => {
-    res.sendFile(path.join(__dirname, "../../client/public/index.html"));
-});
+// router.get('/signup', (req, res) => {
+//     res.sendFile(path.join(__dirname, "../../client/public/index.html"));
+// });
 
-router.get('/login',(req,res)=>{
-    res.sendFile(path.join(__dirname,"../../client/public/index.html"));
-});
+// router.get('/login',(req,res)=>{
+//     res.sendFile(path.join(__dirname,"../../client/public/index.html"));
+// });
 
 router.post("/signup", (req, res) => {
     var firstname = req.body.fname;
@@ -144,7 +144,7 @@ router.post('/login', (req, res) => {
         else{
             console.log("User Not found in the database..!")
             res.status(404).json({error:'Please signup as you dont have an account yet!'});
-            //signup page rediection
+            //signup page redirection
         }
     }).catch((err)=>{
         console.log(err);

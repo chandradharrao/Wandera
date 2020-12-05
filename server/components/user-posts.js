@@ -3,46 +3,45 @@ const router = express.Router();
 const path = require("path");
 const login_authorize = require('../middleware/login-authorize');
 
-//importing the user model as User
+// Importing the user model as User
 const Post = require('../models/post');
 const mongoose = require('mongoose');
 const User = require('../models/wanderer');
 
-//connect to mongoose
+// Connect to mongoose
 mongoose.connect("mongodb://localhost:27017/usersdb",{ useUnifiedTopology: true, useNewUrlParser: true });
 
-//since mongoose promise is deprecated,lets override it node js promise
+// Since mongoose promise is deprecated, override it with a NodeJS promise
 mongoose.Promise = global.Promise;
-//Remove depreceation warnings
+
+// Remove depreceation warnings
 mongoose.set('useFindAndModify',false);
 
-//serve the create-a-post.html
-router.get('/create-a-post',login_authorize,(req,res)=>{
-    res.sendFile(path.join(__dirname, "../client", "/common/create-post.html"));
-})
-
-router.post('/createpost',login_authorize,(req,res)=>{
-    console.log(req.body)
+router.post('/createpost', login_authorize, (req, res) => {
+    console.log("Request for creating a post received.");
     const title = req.body.title;
     const body = req.body.body;
-    console.log(`The title and body are ${req.body.title} and ${req.body.body} and the url is  ${req.body.photo}`);
+    console.log(`The title and body are ${req.body.title} and ${req.body.body}. The URL of the picture 0is  ${req.body.photo}`);
 
     if(!title || !body || !req.body.photo){
-        return res.status(422).json({error:"Please all required fields"});
+        return res.status(422).json({error:"Please enter all required fields."});
     }
     console.log(`The req.user is ${req.user}`);
     Post.create({
         title:title,
         body:body,
         photo:req.body.photo,
-        postedById:req.user._id,//we assigned req.users = the data found in the db while authenticating
-        postedByUName:req.user.username//the username of the user who posted the photo
-    }).then((savedData)=>{
+        /* We assigned req.users or the data 
+        found in the DB while authenticating */
+        postedById:req.user._id,
+        /* The username of the user who posted the photo */
+        postedByUName:req.user.username
+    }).then((savedData) => {
         console.log("Data saved!");
         res.status(200).json({savedData:savedData});
     }).catch((err)=>{
         console.log(err);
-        res.status(422).json({error:"Couldn't save post to the PosCollection in db"});
+        res.status(422).json({error:"Couldn't save the post to the PostCollection in the DB."});
     })
 })
 
@@ -54,7 +53,7 @@ router.get('/viewallposts',(req,res)=>{
     })
 });
 
-//get the posts posted by the users whom I follow
+// Get posts of users I'm following
 router.get("/viewmyfeed",login_authorize,(req,res)=>{
     //Out of all the posts,find those posts that are posted by users presents in the following array of the user loggd in
     Post.find({postedByUName:{$in:req.user.following.follow_unfollowUsername}}).then((docs)=>{//this is similar to "if 3 in [1,2,3] of python",$in matches postedBy to those fields present in req.users.folowing,this can be done with the help of a for loop too.
