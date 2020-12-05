@@ -18,14 +18,15 @@ const Post = () => {
     const [body, setBody] = useState("");
     const [image, setImage] = useState("");
     const [loading, setLoading] = useState(false);
+    const [URL, setURL] = useState("");
 
     /* Make the post request to create post on the server only 
     when the image is successfully posted on the cloud, and the
     URL limking to the image has been set. */
     useEffect(() => {
         // useEffect will kick in also when the url is mounted initially
-        if(image){
-            fetch('/createpost',{
+        if(URL) {
+            fetch('/createpost', {
                 method: "post",
                 headers: {
                     "Content-Type":"application/json"
@@ -33,9 +34,17 @@ const Post = () => {
                 body: JSON.stringify({
                     title: heading,
                     body: body,
-                    photo: image
+                    photo: URL
                 })
-            }).then(res => res.json())
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    alert('Please login or create an account to share your posts.');
+                }
+                else {
+                    res.json();
+                }
+            })
             .then(data => {
                 if(data.error) {
                     console.log(`Error! ${data.error}`);
@@ -44,14 +53,13 @@ const Post = () => {
                     history.push('/account')
                 }
             })
-            .then(res => res.json())
             .catch((err) => {
-                console.group(err)
+                console.log(`Error in routing post: ${err}`);
             });
         }
     /* This effect will kick in only 
        when the url of image is recieved */
-    },[image, body, history, heading])
+    },[URL, body, history, heading])
 
     const PostAlbum = async (e) => {
         /*Upload image files using FormData */
@@ -67,7 +75,8 @@ const Post = () => {
         };
         const res = await fetch(CL_UPLOAD_URL, options)
         const file = await res.json();
-        setImage(file.secure_url);
+        console.log("File: ", file);
+        setURL(file.secure_url);
         
         setLoading(false);
     };

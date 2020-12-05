@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const path = require("path");
+const mongoose = require('mongoose');
 const login_authorize = require('../middleware/login-authorize');
+const CONSTS = require('./constants');
 
 // Importing the user model as User
 const Post = require('../models/post');
-const mongoose = require('mongoose');
 const User = require('../models/wanderer');
 
 // Connect to mongoose
-mongoose.connect("mongodb://localhost:27017/usersdb",{ useUnifiedTopology: true, useNewUrlParser: true });
+mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
 
 // Since mongoose promise is deprecated, override it with a NodeJS promise
 mongoose.Promise = global.Promise;
@@ -21,7 +22,7 @@ router.post('/createpost', login_authorize, (req, res) => {
     console.log("Request for creating a post received.");
     const title = req.body.title;
     const body = req.body.body;
-    console.log(`The title and body are ${req.body.title} and ${req.body.body}. The URL of the picture 0is  ${req.body.photo}`);
+    console.log(`The title and body are ${req.body.title} and ${req.body.body}. The URL of the picture is  ${req.body.photo}`);
 
     if(!title || !body || !req.body.photo){
         return res.status(422).json({error:"Please enter all required fields."});
