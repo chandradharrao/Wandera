@@ -3,20 +3,20 @@ const router = express.Router();
 const path = require("path");
 const login_authorize = require('../middleware/login-authorize');
 
-//importing the user model as User
+// Importing the user model as User
 const Post = require('../models/post');
 const mongoose = require('mongoose');
 const User = require('../models/wanderer');
 
-//connect to mongoose
+// Connect to mongoose
 mongoose.connect("mongodb://localhost:27017/usersdb",{ useUnifiedTopology: true, useNewUrlParser: true });
 
-//since mongoose promise is deprecated,lets override it node js promise
+// Since mongoose promise is deprecated, override it node js promise
 mongoose.Promise = global.Promise;
 //Remove depreceation warnings
 mongoose.set('useFindAndModify',false);
 
-//serve the create-a-post.html
+// Serve the create-a-post.html
 router.get('/create-a-post',login_authorize,(req,res)=>{
     res.sendFile(path.join(__dirname, "../client", "/common/create-post.html"));
 })

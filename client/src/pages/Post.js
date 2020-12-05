@@ -15,48 +15,55 @@ const Post = () => {
     const [image, setImage] = useState("");
     const [loading,setLoading] = useState(false);
 
-    //we need to make the post request to create post on server only when the photo has been posted on the cloud and as a result the url has been changed.
-   useEffect(()=>{
-        if(image){//but the use Effect will kick in also when the url is mounted initially
+    /* Make the post request to create post on the server only 
+    when the image is successfully posted on the cloud, and the
+    URL limking to the image has been set. */
+    useEffect(() => {
+        // useEffect will kick in also when the url is mounted initially
+        if(image){
             fetch('/createpost',{
-                method:"post",
-                headers:{
+                method: "post",
+                headers: {
                     "Content-Type":"application/json"
                 },
-                body:JSON.stringify({
-                    title:heading,
-                    body:body,
-                    photo:image
+                body: JSON.stringify({
+                    title: heading,
+                    body: body,
+                    photo: image
                 })
-            }).then(res=>res.json()).then(data=>{
-                if(data.error){
+            }).then(res => res.json()).
+            then(data => {
+                if(data.error) {
                     console.log("Error! ${data.error}");
                 }
-                else{
+                else {
                     history.push('/account')
                 }
-            }).then(res=>res.json()).catch((err)=>{
+            }).then(res => res.json())
+            .catch((err) => {
                 console.group(err)
             });
         }
-    },[image])  //this effect will kick in only when the url of image is recieved
+        /* This effect will kick in only 
+        when the url of image is recieved */
+    },[image, body, history, heading])
 
     const PostAlbum = async (e) => {
-        alert(image);
         /*Upload image files using FormData */
         const data = new FormData();
         data.append("file", image);
-        data.append("upload_preset","wandera");
+        data.append("upload_preset", CL_PRESET);
+
         setLoading(true);
 
-        const res = await fetch("https://api.cloudinary.com/v1_1/chandracloudinarystorage123/image/upload",{
+        const options = {
             method: "POST",
             body: data
-        })
-
+        };
+        const res = await fetch(CL_UPLOAD_URL, options)
         const file = await res.json();
-        alert(file.secure_url);
         setImage(file.secure_url);
+        
         setLoading(false);
     };
 
