@@ -30,6 +30,10 @@ const PostSchema = new mongoose.Schema({
     // An array that contains the users who liked the particular post
     likedBy:[{type:LikeSchema}],
     comments:[{type:CommentSchema}],
+    isDeleted:{
+        type:Boolean,
+        default:false
+    }
 })
 
 // "postCollection" collection will follow PostSchema when storing the data
