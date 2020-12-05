@@ -1,7 +1,11 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
+import { useHistory } from 'react-router-dom';
 import Navbar from '../components/NavbarProf';
 import "./Post.css";
-import { useHistory } from 'react-router-dom';
+
+
+/* We get a third-party to host images and use a URL string to
+reference the image in order to display it on webpages */
 
 /* Cloudinary auxiliary data */
 const CL_CLOUD_NAME = "chandracloudinarystorage123";
@@ -76,7 +80,7 @@ const Post = () => {
                 <form className="post-form" action='#'>
                     <div className="post-input">
                         <input type="text" name='post-heading' value={heading} onChange={(e) => {setHeading(e.target.value)}} placeholder="Heading" required/>
-                        <textarea rows="5" cols="10" name="post-body" maxlength="50" wrap="hard" value={body} onChange={(e) => {setBody(e.target.value)}} placeholder="Body"></textarea>
+                        <textarea rows="5" cols="10" name="post-body" maxLength="50" wrap="hard" value={body} onChange={(e) => {setBody(e.target.value)}} placeholder="Body"></textarea>
                         <div className="file-input">
                             <span>Upload Image</span>
                             <input type="file" onChange={(e) => {setImage(e.target.files[0])}} required/>
@@ -87,7 +91,7 @@ const Post = () => {
             </div>
         </div>
     </div>
-    )
+    );
 };
 
 export default Post;
