@@ -42,7 +42,6 @@ const Login = () => {
             /* Since we can store only strings in the local storage
                 as key value pairs, we stringify the json user details */
             localStorage.setItem("user", JSON.stringify(file.user));
-            alert('File user :', JSON.stringify(file.user));
             dispatch({type: "USER", payload: file.user})
             history.push('/main');
         }
