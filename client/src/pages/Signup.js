@@ -64,7 +64,7 @@ const Signup = () => {
             if (status === 404) {
                 alert(file.error);
             } else if (status === 400) {
-                console.log(`Singup response error: ${file.error}`);
+                console.log(`Signup response error: ${file.error}`);
             } else {
                 alert("Successfully created an account!");
                 history.push('/login');

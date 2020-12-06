@@ -25,34 +25,42 @@ router.post('/createpost', login_authorize, (req, res) => {
     console.log(`The title and body are ${req.body.title} and ${req.body.body}. 
     The URL of the picture is  ${req.body.photo}`);
 
-    if(!title || !body || !req.body.photo){
-        return res.status(422).json({error:"Please enter all required fields."});
+    if(!title || !body || !req.body.photo) {
+        return res.status(404).json({error:"Please enter all required fields."});
     }
     console.log(`The req.user is ${req.user}`);
-    Post.create({
-        title:title,
-        body:body,
-        photo:req.body.photo,
+    const CreateNew = async (e) => {
+        await Post.create({
+            title:title,
+            body:body,
+            photo:req.body.photo,
 
-        /* We assigned req.users or the data 
-        found in the DB while authenticating */
-        postedById:req.user._id,
+            /* We assigned req.users or the data 
+            found in the DB while authenticating */
+            postedById:req.user._id,
 
-        /* The username of the user who posted the photo */
-        postedByUName:req.user.username
-    }).then((savedData) => {
-        console.log("Data saved!");
-        res.status(200).json({savedData:savedData});
-    }).catch((err) => {
-        console.log(err);
-        res.status(422).json({error:"Couldn't save the post to the PostCollection in the DB."});
-    })
+            /* The username of the user who posted the photo */
+            postedByUName:req.user.username
+        })
+        .then((savedData) => {
+            console.log("Saved Data", savedData)
+            console.log("Data saved!");
+            res.status(200).json({savedData:savedData});
+            console.log(res.savedData);
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(404).json({error:"Couldn't save the post to the PostCollection in the DB."});
+        })
+    }
 })
 
 router.get('/viewallposts', (req,res) => {
-    Post.find().then((docs) => {
+    Post.find()
+    .then((docs) => {
         res.status(200).json({posts:docs});
-    }).catch((err) => {
+    })
+    .catch((err) => {
         res.status(422).json({message:"Not able to fetch all posts"});
     })
 });
@@ -64,14 +72,17 @@ router.get("/viewmyfeed", login_authorize, (req, res) => {
     Post.find({
         postedByUName: {$in:req.user.following.follow_unfollowUsername}
     })
+
     /* Similar to "if 3 in [1,2,3] of python" -> 
     $in matches postedBy to those fields present 
     in req.users.following, this can be done with
     the help of a for loop too. */
+    
     .then((docs) => {
         res.status(200).json({posts:docs});
-    }).catch((err) => {
-        res.status(422).json({message:"Not able to fetch all posts"});
+    })
+    .catch((err) => {
+        res.status(404).json({error: "Not able to fetch all posts"});
     })
 })
 
