@@ -101,4 +101,14 @@ router.get('/viewallthreads',(req,res)=>{
     })
 });
 
+//pass the tag as the query in the url
+router.get("/filterbytag",(req,res)=>{
+    const toQuery = {tag:req.query.thetag};
+    Threads.find(toQuery).then((result)=>{
+        return res.status(200).json({threads:result})
+    }).catch(err=>{
+        return res.status(422).json({error:err});
+    })
+})
+
 module.exports = router;
