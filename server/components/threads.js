@@ -90,7 +90,7 @@ router.post('/downvotethread',login_authorize,(req,res)=>{
             return res.status(404).json({error:err});
         return res.status(200).json({result:result})
     })
-});
+})
 
 
 router.get('/viewallthreads',(req,res)=>{
