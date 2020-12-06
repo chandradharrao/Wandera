@@ -7,10 +7,11 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  float: left;
 }
 
 .albums-container img {
-  margin: 1em 0.5em;
-  width: 40vh;
-  height: 50vh;
+  margin: 1em 1em;
+  max-width: 25em;
+  max-height: 25em;
 }
