@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const NumberInt = require("mongodb").Int32;
 const ThreadCommentSchema = require('./thread-comments');
 
 const ThreadSchema = new mongoose.Schema({
@@ -35,12 +34,8 @@ const ThreadSchema = new mongoose.Schema({
         required:true
     },
     comments:[{type:ThreadCommentSchema}],
-    upvotes:{
-        type:NumberInt,
-        default:0
-    },
-    downvotes:{
-        type:NumberInt,
+    votes:{
+        type:Number,
         default:0
     }
 })

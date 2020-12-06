@@ -4,9 +4,8 @@ const path = require("path");
 const login_authorize = require('../middleware/login-authorize');
 
 // Importing the user model as User
-const Thread = require('../models/discussion_threads');
+const Threads = require('../models/discussion_threads');
 const mongoose = require('mongoose');
-const ThreadComment = require('../models/thread-comments');
 
 // Connect to mongoose
 mongoose.connect("mongodb://localhost:27017/usersdb",{ useUnifiedTopology: true, useNewUrlParser: true });
@@ -32,7 +31,7 @@ router.post("/createthread",login_authorize,(req,res)=>{
         link = req.body.link;
     }
 
-    Thread.create({
+    Threads.create({
         title:title,
         text:text,
         tag:tag,
@@ -53,6 +52,7 @@ router.post("/createthread",login_authorize,(req,res)=>{
 
 })
 
+//pass the thread_id in body from fron end react
 router.put("/createthreadcomment",login_authorize,(req,res)=>{
     const text = req.body.text;
     
@@ -63,13 +63,42 @@ router.put("/createthreadcomment",login_authorize,(req,res)=>{
     }
 
     //find the thread using the req.body.thread_id in the db and update it
-    Thread.findByIdAndUpdate(req.body.thread_id,{
+    Threads.findByIdAndUpdate(req.body.thread_id,{
         $push : {comments:aComment}
-    },{new:true}).exec(err,result)=>{
+    },{new:true}).exec((err,result)=>{
         if(err)
             return res.status(404).json({error:err});
         return res.status(200).json({result:result})
-    }
-})
+    })
+});
+
+router.post('/upvotethread',login_authorize,(req,res)=>{
+    Threads.findByIdAndUpdate(req.body.thread_id,{
+        $inc : {votes : 1}
+    },{new:true}).exec((err,result)=>{
+        if(err)
+            return res.status(404).json({error:err});
+        return res.status(200).json({result:result})
+    })
+});
+
+router.post('/downvotethread',login_authorize,(req,res)=>{
+    Threads.findByIdAndUpdate(req.body.thread_id,{
+        $inc : {votes : -1}
+    },{new:true}).exec((err,result)=>{
+        if(err)
+            return res.status(404).json({error:err});
+        return res.status(200).json({result:result})
+    })
+});
+
+
+router.get('/viewallthreads',(req,res)=>{
+    Threads.find().then((docs)=>{
+        res.status(200).json({threads:docs});
+    }).catch((err)=>{
+        res.status(422).json({message:"Not able to fetch all discussion threads"});
+    })
+});
 
 module.exports = router;
