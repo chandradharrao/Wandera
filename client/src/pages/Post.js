@@ -38,32 +38,29 @@ const Post = () => {
                     photo: URL
                 })
             })
-            .then(res => console.log(res))
-            //     if (res.status === 404) {
-            //         alert(res.error);
-            //     } else if (res.status === 401) {
-            //         alert('Please create an account or login to post albums.');
-            //         history.push('/login');
-            //     } else {
-            //         res.json();
-            //         alert("Success! File: ", JSON.stringify(res))
-            //     }
-            // })
-            // .then(data => {
-            //     if(data.error) {
-            //         console.log(`Error! ${data.error}`);
-            //     } else {
-            //         alert('Successfully posted an album!');
-            //         history.push('/main');
-            //     }
-            // })
+            .then(res => {
+                if (res.status === 422 || res.status === 404) {
+                    alert(res.error);
+                    return;
+                } else if (res.status === 401) {
+                    alert('Please create an account or login to post albums.');
+                    history.push('/login');
+                    return;
+                } else {
+                    res.json();
+                }
+            })
+            .then(data => {
+                alert('Successfully posted an album!');
+                history.push('/main');
+            })
             .catch((err) => {
                 console.log(`Error in routing post: ${err}`);
             })
         }
     /* This effect will kick in only 
        when the url of image is recieved */
-    },[URL, body, history, heading])
+    }, [URL, body, history, heading])
 
     const PostAlbum = async (e) => {
         /*Upload image files using FormData */

@@ -29,30 +29,27 @@ router.post('/createpost', login_authorize, (req, res) => {
         return res.status(404).json({error:"Please enter all required fields."});
     }
     console.log(`The req.user is ${req.user}`);
-    const CreateNew = async (e) => {
-        await Post.create({
-            title:title,
-            body:body,
-            photo:req.body.photo,
+    Post.create({
+        title:title,
+        body:body,
+        photo:req.body.photo,
 
-            /* We assigned req.users or the data 
-            found in the DB while authenticating */
-            postedById:req.user._id,
+        /* We assigned req.users or the data 
+        found in the DB while authenticating */
+        postedById:req.user._id,
 
-            /* The username of the user who posted the photo */
-            postedByUName:req.user.username
-        })
-        .then((savedData) => {
-            console.log("Saved Data", savedData)
-            console.log("Data saved!");
-            res.status(200).json({savedData:savedData});
-            console.log(res.savedData);
-        })
-        .catch((err) => {
-            console.log(err);
-            res.status(404).json({error:"Couldn't save the post to the PostCollection in the DB."});
-        })
-    }
+        /* The username of the user who posted the photo */
+        postedByUName:req.user.username
+    })
+    .then((savedData) => {
+        console.log("Saved Data", savedData)
+        console.log("Data saved!");
+        res.status(200).json({savedData:savedData});
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(422).json({error:"Couldn't save the post to the PostCollection in the DB."});
+    })
 })
 
 router.get('/viewallposts', (req,res) => {
