@@ -98,14 +98,14 @@ router.get('/viewmyposts', login_authorize, (req,res) => {
 
 
 //havent tested since it will be a bit irritating to test using postman,lets test it after donf front end
-router.put('/like',login_authorize,(req,res)=>{//we use put for 'updating' the likes array
+router.put('/like', login_authorize, (req, res) => {//we use put for 'updating' the likes array
     console.log(`Liked by ${req.user._id}`);
-    Post.findById(req.body.post_id,(err,doc)=>{
-        if(err){
+    Post.findById(req.body.post_id, (err, doc) => {
+        if (err) {
             return res.status(404).json({error:err});
         }
         var isAlreadyLiked = false;
-        for(var i = 0;i<doc.likedBy.length;i++){
+        for(var i = 0; i < doc.likedBy.length; i++) {
             console.log(doc.likedBy[i].likerName);
             if(doc.likedBy[i].likerName === req.user.username){
                 console.log("User already Liked");
@@ -117,67 +117,70 @@ router.put('/like',login_authorize,(req,res)=>{//we use put for 'updating' the l
             likerName:req.user.username
         }
         if(!isAlreadyLiked){
-            Post.findByIdAndUpdate(req.body.post_id,{
-                $push : {likerID:req.user.id,likedBy:newLike} //we will use the set operator to modify the likes array by pushing the current user who liked the post
-            },{
-                new:true //return the modified record
-            }).exec((err,result)=>{//execute te query
-                if(err){
+            Post.findByIdAndUpdate(req.body.post_id, {
+                $push : {likerID:req.user.id, likedBy:newLike} //we will use the set operator to modify the likes array by pushing the current user who liked the post
+            }, {
+                new: true //return the modified record
+            })
+            .exec((err, result) => {//execute te query
+                if (err) {
                     return res.status(422).json({error:err});
                 }
                 return res.status(200).json({result:result});
             });
-        }
-        else{
-            return res.json({message:"Already liked!"});
+        } else {
+            return res.json({message: "Already liked!"});
         }
     });
 })
 
 router.put('/unlike',login_authorize,(req,res)=>{//we use put for 'updating' the likes array
     console.log(`We wanna remove the liker ${req.user._id} from this post ${req.body.post_id}`);
-    Post.findByIdAndUpdate(req.body.post_id,{
-        $pull : {likedBy:{likerName:req.user.username}} //we will use the set operator to modify the likes array by pulling the current user who liked the post
+    Post.findByIdAndUpdate(req.body.post_id, {
+        $pull : {likedBy: {likerName:req.user.username}} //we will use the set operator to modify the likes array by pulling the current user who liked the post
     },{
         new:true //return the modified record
-    }).exec((err,result)=>{//execute te query
+    }).exec((err, result) => {//execute te query
         if(err){
-            return res.status(422).json({error:err});
+            return res.status(422).json({error: err});
         }
-        return res.status(200).json({result:result});
+        return res.status(200).json({result: result});
     })
 })
 
-router.put('/comment',login_authorize,(req,res)=>{//we use put for 'updating' the likes array
+router.put('/comment', login_authorize, (req, res)=>{//we use put for 'updating' the likes array
 
     const newComment = {
-        content:req.body.text,//the body of the text from the front end
-        authorID:req.user._id,
-        authorName:req.user.username
+        content: req.body.comment,//the body of the text from the front end
+        authorID: req.user._id,
+        authorName: req.user.username
     }
-    Post.findByIdAndUpdate(req.body.post_id,{//find the particular post and chage its comments field
+    console.log('User: ', req.user);
+    Post.findByIdAndUpdate(req.body.post_id, {//find the particular post and chage its comments field
         $push : {comments:newComment}
-    },{
+    }, {
         new:true 
-    }).exec((err,result)=>{
-        if(err){
+    })
+    .exec((err, result) => {
+        if(err) {
             return res.status(422).json({error:err});
         }
         return res.status(200).json({result:result});
     })
 })
 
-router.delete('/deletepost',login_authorize,(req,res)=>{
-    Post.findOne({_id:req.body.post_id}).exec((err,thepost)=>{//pass the id of the post to be deleted through the front end
-        if(err || !thepost){
+router.delete('/deletepost', login_authorize, (req,res) => {
+    Post.findOne({_id:req.body.post_id})
+    .exec((err, thepost) => {   //pass the id of the post to be deleted through the front end
+        if(err || !thepost) {
             return res.status(422).json({error:err});
         }
         if(thepost.postedById.toString() === req.user._id.toString() && thepost.postedByUName === req.user.username){//if the post is published by user itself then only we can delete
-            thepost.remove().then((result)=>{
+            thepost.remove().then((result) => {
                 res.status(200).json({
                     message:"Deleted successfully"
                 });
-            }).catch((err)=>{
+            }).catch((err) => {
                 res.status(422).json({
                     error:err
                 })
