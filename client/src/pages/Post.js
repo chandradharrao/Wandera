@@ -16,6 +16,7 @@ const Post = () => {
     const [heading, setHeading] = useState("");
     const [body, setBody] = useState("");
     const [image, setImage] = useState("");
+    // eslint-disable-next-line no-unused-vars
     const [loading, setLoading] = useState(false);
     const [URL, setURL] = useState("");
 

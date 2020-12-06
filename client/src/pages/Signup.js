@@ -29,24 +29,20 @@ const Signup = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirm] = useState("");
 
-    const PostData = () => {
+    const PostSignupData = async (e) => {
         if(!re.test(email)){
             alert("Invalid email address. Please enter a valid email.");
-            return;
         }
-        if (!validate(dob)) {
+        else if (!validate(dob)) {
             alert("Sorry! You've got to be older than 18 years.");
-            return;
         }
-        if (password.length < 7) {
+        else if (password.length < 7) {
             alert("Password too short. Enter a stronger password.");
-            return;
         }
-        if (password !== confirmPassword) {
+        else if (password !== confirmPassword) {
             alert("Passwords don't match");
-            return;
         } else {
-            fetch('/signup', {
+            const res = await fetch('/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -59,20 +55,21 @@ const Signup = () => {
                     username,
                     password
                 })
-            })
-            .then(data => {
-                if(data.error) {
-                    console.log("Error!", data);
-                } else {
-                    alert("Successfully created an account!");
-                    history.push('/login');
-                }
-            })
-            .then(res => res.json())
-            .catch(err => {
-                console.log(err);
             });
-        };
+            
+            const file = await res.json();
+            const status = res.status;
+            console.log(`Signup response JSON: ${JSON.stringify(file)}\nResponse status: ${status}`);
+            
+            if (status === 404) {
+                alert(file.error);
+            } else if (status === 400) {
+                console.log(`Singup response error: ${file.error}`);
+            } else {
+                alert("Successfully created an account!");
+                history.push('/login');
+            }
+        }
     };
     
     return (
@@ -83,21 +80,21 @@ const Signup = () => {
                     <div className="signup-container">
                         <h1>Create an Account</h1>
                         <div className="signup-form">
-                            <label for="fname">First Name</label>
+                            <label htmlFor="fname">First Name</label>
                             <input type="text" name="fname" value={fname} onChange={(e) => setFName(e.target.value)} required /><br/>
-                            <label for="lname">Last Name</label>
+                            <label htmlFor="lname">Last Name</label>
                             <input type="text" name="lname" value={lname} onChange={(e) => setLName(e.target.value)} required /><br/>
-                            <label for="email">Email Address</label>
+                            <label htmlFor="email">Email Address</label>
                             <input type="text" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required /><br/>
-                            <label for="dob">Date of Birth</label>
+                            <label htmlFor="dob">Date of Birth</label>
                             <input type="date" name="dob" min="1900-01-01" value={dob} onChange={(e) => setDOB(e.target.value)} required /><br/>
-                            <label for="username">Username</label>
+                            <label htmlFor="username">Username</label>
                             <input type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required /><br/>
-                            <label for="password">Password</label>
+                            <label htmlFor="password">Password</label>
                             <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required /><br/>
-                            <label for="confirm_password">Confirm Password</label>
+                            <label htmlFor="confirm_password">Confirm Password</label>
                             <input type="password" name="confirm_password" value={confirmPassword} onChange={(e) => setConfirm(e.target.value)} required /><br/>
-                            <button class="form-submit" onClick={() => PostData()}>SIGN UP</button>
+                            <button className="form-submit" onClick={() => PostSignupData()}>SIGN UP</button>
                         </div>
                         <div className="have-account">
                             Already have an account?

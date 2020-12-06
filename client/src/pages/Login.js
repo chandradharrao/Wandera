@@ -5,12 +5,13 @@ import NavbarMain from "../components/NavbarMain";
 import "./Login.css";
 
 const Login = () => {
+    // eslint-disable-next-line no-unused-vars
     const {state, dispatch} = useContext(UserContext);
     const history = useHistory();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const PostData = async (e) => {
+    const PostLoginData = async (e) => {
         const res = await fetch('/login', {
             method: 'POST',
             headers: {
@@ -56,7 +57,7 @@ const Login = () => {
                         <div className="login-form">
                             <input type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" required /><br/>
                             <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
-                            <button className="form-submit" onClick={() => PostData()}>LOGIN</button>
+                            <button className="form-submit" onClick={() => PostLoginData()}>LOGIN</button>
                         </div>
                     </div>
                 </div>

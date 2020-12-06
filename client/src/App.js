@@ -22,6 +22,8 @@ const RouteControl = () => {
     const user = localStorage.getItem("user");
     console.log(`User local storage item: ${user}`);
     if (user) {
+      /* Make sure the user is logged in if the browser
+      is not logged on and is closed */
       dispatch({type: "USER", payload: user});
     } else {
       if(!history.location.pathname.startsWith('/reset'))

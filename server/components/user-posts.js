@@ -15,14 +15,15 @@ mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
 // Since mongoose promise is deprecated, override it with a NodeJS promise
 mongoose.Promise = global.Promise;
 
-// Remove depreceation warnings
+// Remove deprication warnings
 mongoose.set('useFindAndModify',false);
 
 router.post('/createpost', login_authorize, (req, res) => {
     console.log("Request for creating a post received.");
     const title = req.body.title;
     const body = req.body.body;
-    console.log(`The title and body are ${req.body.title} and ${req.body.body}. The URL of the picture is  ${req.body.photo}`);
+    console.log(`The title and body are ${req.body.title} and ${req.body.body}. 
+    The URL of the picture is  ${req.body.photo}`);
 
     if(!title || !body || !req.body.photo){
         return res.status(422).json({error:"Please enter all required fields."});
@@ -32,44 +33,56 @@ router.post('/createpost', login_authorize, (req, res) => {
         title:title,
         body:body,
         photo:req.body.photo,
+
         /* We assigned req.users or the data 
         found in the DB while authenticating */
         postedById:req.user._id,
+
         /* The username of the user who posted the photo */
         postedByUName:req.user.username
     }).then((savedData) => {
         console.log("Data saved!");
         res.status(200).json({savedData:savedData});
-    }).catch((err)=>{
+    }).catch((err) => {
         console.log(err);
         res.status(422).json({error:"Couldn't save the post to the PostCollection in the DB."});
     })
 })
 
-router.get('/viewallposts',(req,res)=>{
-    Post.find().then((docs)=>{
+router.get('/viewallposts', (req,res) => {
+    Post.find().then((docs) => {
         res.status(200).json({posts:docs});
-    }).catch((err)=>{
+    }).catch((err) => {
         res.status(422).json({message:"Not able to fetch all posts"});
     })
 });
 
 // Get posts of users I'm following
-router.get("/viewmyfeed",login_authorize,(req,res)=>{
-    //Out of all the posts,find those posts that are posted by users presents in the following array of the user loggd in
-    Post.find({postedByUName:{$in:req.user.following.follow_unfollowUsername}}).then((docs)=>{//this is similar to "if 3 in [1,2,3] of python",$in matches postedBy to those fields present in req.users.folowing,this can be done with the help of a for loop too.
+router.get("/viewmyfeed", login_authorize, (req, res) => {
+    /* Out of all the posts, find those posts that are 
+    posted by users presents in the following array of the user logged in */
+    Post.find({
+        postedByUName: {$in:req.user.following.follow_unfollowUsername}
+    })
+    /* Similar to "if 3 in [1,2,3] of python" -> 
+    $in matches postedBy to those fields present 
+    in req.users.following, this can be done with
+    the help of a for loop too. */
+    .then((docs) => {
         res.status(200).json({posts:docs});
-    }).catch((err)=>{
+    }).catch((err) => {
         res.status(422).json({message:"Not able to fetch all posts"});
     })
 })
 
-router.get('/viewmyposts',login_authorize,(req,res)=>{
+router.get('/viewmyposts', login_authorize, (req,res) => {
     Post.find({
         postedById:req.user._id
-    }).then((data)=>{
+    })
+    .then((data) => {
         res.status(200).json({myPost:data})
-    }).catch((err)=>{
+    })
+    .catch((err) => {
         console.log(err);
         res.status(422).json({error:"Not able to fetch your posts:<"});
     })

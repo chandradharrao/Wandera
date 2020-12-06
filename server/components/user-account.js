@@ -12,26 +12,16 @@ const CONSTS = require('./constants');
 
 /* Connect to mongoose, override depracated
  Promise with the global one */
-mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
+
+ mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
 mongoose.Promise = global.Promise;
 
 /* Router for accessing protected resources like the main feed */
 /* Requests pass through the middleware via this route */
+
 router.get('/protected', login_authorize, (req, res) => {
     res.json({message: "Welcom back! This is your home page!"});
 });
-
-// router.get('/', (req, res) => {
-//     res.send("<h1>Wandera HomePage</h1>");
-// })
-
-// router.get('/signup', (req, res) => {
-//     res.sendFile(path.join(__dirname, "../../client/public/index.html"));
-// });
-
-// router.get('/login',(req,res)=>{
-//     res.sendFile(path.join(__dirname,"../../client/public/index.html"));
-// });
 
 router.post("/signup", (req, res) => {
     var firstname = req.body.fname;
@@ -42,25 +32,26 @@ router.post("/signup", (req, res) => {
     var password = req.body.password;
 
     if (!firstname || !lastname || !email || !username) {
-        res.status(422).json({error : "Please fill in all the details."});
+        res.status(404).json({error : "Please fill in all the details."});
     } 
     else {
         /* Check if email is already in use */
-        User.findOne({email:email},(err,data)=>{
-            if(err){
-                return res.json({error:err});
+        User.findOne({email: email}, (err, data) => {
+            if (err) {
+                return res.status(400).json({error:err});
             }
-            if(!data){
+            if(!data) {
                 console.log("No user with this email exists yet.");
                 /* Check if user name is already in use */
-                User.findOne({username:username},(err,foundUser)=>{
-                    if(err){
-                        return res.json({error:err});
+                User.findOne({username:username}, (err, foundUser) => {
+                    if(err) {
+                        return res.status(400).json({error:err});
                     }
-                    if(!foundUser){
+                    if(!foundUser) {
                         console.log("No user with this username till now");
                         /* Hashing the password before saving */
                         bcrypt.hash(password, 12).then(hashedPassword => {
+
                             /* Create the new user object, save it simultaneously to the 
                             WandererCollection and return a promise, since it's async */
                             User.create({
@@ -70,27 +61,29 @@ router.post("/signup", (req, res) => {
                                 username:username,
                                 last_name:lastname,
                                 first_name:firstname
-                            }).then((savedData) => {            // Once it's saved, the saved data is returned
-                                console.log("Data saved");
+                                // Once it's saved, the saved data is returned
+                            })
+                            .then((savedData) => {            
+                                console.log("Data saved.");
                                 res.json({message : savedData});
-                            }).catch(err=>{
-                                console.log(err);
+                            })
+                            .catch(err => {
+                                res.status(400).json({error: err});
                             });
-                        }).catch(err=>{
-                            console.log(err);
+                        })
+                        .catch(err => {
+                            res.status(400).json({error: err});
                         })
                     }
-                    else{
+                    else {
                         console.log("Username is already in use.");
-                        res.json({err:'Username is already in use.'});
+                        res.status(404).json({error :'Username is already in use. Please pick another one.'});
                     }
                 })
-            }
-            else{
+            } else {
                 console.log("This email is already in use.");
-                res.json({err:'Email already in use.'});
+                res.status(404).json({error : 'Email already in use. Please login to your account.'});
             }
-            // TODO : redirect to the login page
         })
     }
 });
