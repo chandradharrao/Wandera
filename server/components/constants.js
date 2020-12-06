@@ -6,6 +6,6 @@ const CONSTS = {
                   },
    PORT : 3001,
    JWT_SECRET : 'xman6969FortniteandBatman'
-   }
+   };
 
 module.exports = CONSTS;
