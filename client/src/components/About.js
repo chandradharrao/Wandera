@@ -1,8 +1,11 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import {UserContext} from "../App";
 import "./About.css";
 import ProfilePic from "../images/profilepic.jpg";
 
 const About = () => {
+    const {state, dispatch} = useContext(UserContext);
+
     return (
         <div className="about">
             <div className="about-container">
@@ -10,7 +13,7 @@ const About = () => {
                     <img src={ProfilePic} alt="User"/>
                 </div>
                 <div className='user-info'>
-                    <div className="Name">First Last</div>
+                    <div className="Name">{state.name}</div>
                     <div className="Username">Username</div>
                     <div className="user-stats">
                         <span>10 Stories</span>

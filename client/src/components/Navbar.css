@@ -5,28 +5,46 @@
   background-color: rgb(255, 255, 255);
 }
 
-li,
-a,
-button {
+.Navbar li,
+.Navbar a {
   font-family: Cormorant_Garamond;
   font-weight: normal;
   font-style: normal;
   font-size: 25px;
   color: #494848;
   text-decoration: none;
-}
-
-.button {
-  padding: 0.1em 0.6em;
-  border: 0.1em solid #6d6d6d;
-  margin: 0 0.1em 0.1em 0;
-  border-radius: 1em;
-  box-sizing: border-box;
-  border-color: #c5c3c3;
   cursor: pointer;
 }
 
-header {
+.standout-button {
+  font-family: Cormorant_Garamond;
+  font-size: 25px;
+  outline: none;
+  padding: 0.2em 0.3em;
+  border: 1px solid #c2c2c2;
+  margin: 0 0.1em 0.1em 0;
+  border-radius: 0.5em;
+  box-sizing: border-box;
+  background-color: #494848;
+  color: white !important;
+  cursor: pointer;
+}
+
+.standout-button:hover {
+  background: grey;
+}
+
+.logout-button {
+  color: #494848;
+  font-family: Cormorant_Garamond;
+  font-size: 25px;
+  background: none;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.Navbar header {
   display: flex;
   justify-content: space-between;
   align-items: center;

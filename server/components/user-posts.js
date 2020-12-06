@@ -92,7 +92,7 @@ router.get('/viewmyposts', login_authorize, (req,res) => {
     })
     .catch((err) => {
         console.log(err);
-        res.status(422).json({error:"Not able to fetch your posts:<"});
+        res.status(422).json({error:"Not able to fetch the user's posts."});
     })
 })
 

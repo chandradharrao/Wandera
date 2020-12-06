@@ -26,7 +26,7 @@ const Login = () => {
         });
         
         const file = await res.json();
-        console.log('File: ', file);
+        console.log('File: ', JSON.stringify(file));
     
         if (res.status === 404) {
             alert('This account does not exist. Please sign up to create an account.');
@@ -42,6 +42,7 @@ const Login = () => {
             /* Since we can store only strings in the local storage
                 as key value pairs, we stringify the json user details */
             localStorage.setItem("user", JSON.stringify(file.user));
+            alert('File user :', JSON.stringify(file.user));
             dispatch({type: "USER", payload: file.user})
             history.push('/main');
         }

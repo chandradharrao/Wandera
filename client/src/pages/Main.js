@@ -7,7 +7,7 @@ import like_icon from "../images/Like.png";
 const Main = () => {
     const [data, setData] = useState([]);
 
-    useEffect(()=>{
+    useEffect(() => {
         fetch('/viewallposts', {
             headers: {
                 "Authorization":"Bearer " + localStorage.getItem("jwt")
@@ -15,17 +15,16 @@ const Main = () => {
         })
         .then(res => res.json())
         .then(data => {
-            console.log(`Main feed view posts response: ${JSON.stringify(data)}`);
             setData(data.posts);
         })
-     },[]);
+     });
 
     return (
     <div className="main-page">
         <Navbar />
         {
             /* Make a copy of the data posts array, 
-            and reverse it to display newest posts first */
+            and reverse it to display newest posts first  */
             data.slice(0).reverse().map(item => {
                 return (
                     <div className="main-container" key={item._id}>
@@ -46,7 +45,7 @@ const Main = () => {
                      </div>                    
                 );
             })
-        }   
+        }
     </div>
     )
 };
