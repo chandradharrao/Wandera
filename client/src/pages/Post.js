@@ -29,7 +29,8 @@ const Post = () => {
             fetch('/createpost', {
                 method: "post",
                 headers: {
-                    "Content-Type":"application/json"
+                    "Content-Type":"application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("jwt")
                 },
                 body: JSON.stringify({
                     title: heading,
@@ -37,25 +38,28 @@ const Post = () => {
                     photo: URL
                 })
             })
-            .then(res => {
-                if (res.status === 401) {
-                    alert('Please login or create an account to share your posts.');
-                }
-                else {
-                    res.json();
-                }
-            })
-            .then(data => {
-                if(data.error) {
-                    console.log(`Error! ${data.error}`);
-                }
-                else {
-                    history.push('/account')
-                }
-            })
+            .then(res => console.log(res))
+            //     if (res.status === 404) {
+            //         alert(res.error);
+            //     } else if (res.status === 401) {
+            //         alert('Please create an account or login to post albums.');
+            //         history.push('/login');
+            //     } else {
+            //         res.json();
+            //         alert("Success! File: ", JSON.stringify(res))
+            //     }
+            // })
+            // .then(data => {
+            //     if(data.error) {
+            //         console.log(`Error! ${data.error}`);
+            //     } else {
+            //         alert('Successfully posted an album!');
+            //         history.push('/main');
+            //     }
+            // })
             .catch((err) => {
                 console.log(`Error in routing post: ${err}`);
-            });
+            })
         }
     /* This effect will kick in only 
        when the url of image is recieved */
@@ -90,7 +94,7 @@ const Post = () => {
                 <form className="post-form" action='#'>
                     <div className="post-input">
                         <input type="text" name='post-heading' value={heading} onChange={(e) => {setHeading(e.target.value)}} placeholder="Heading" required/>
-                        <textarea rows="5" cols="10" name="post-body" maxLength="50" wrap="hard" value={body} onChange={(e) => {setBody(e.target.value)}} placeholder="Body"></textarea>
+                        <textarea rows="5" cols="10" name="post-body" maxLength="500" wrap="hard" value={body} onChange={(e) => {setBody(e.target.value)}} placeholder="Body"></textarea>
                         <div className="file-input">
                             <span>Upload Image</span>
                             <input type="file" onChange={(e) => {setImage(e.target.files[0])}} required/>
@@ -101,7 +105,7 @@ const Post = () => {
                             (e) => {
                                 e.preventDefault();
                                 PostAlbum()
-                        }
+                            }   
                         }>POST ALBUM</button>
                     </div>
                 </form>
