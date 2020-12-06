@@ -1,16 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import Navbar from '../components/NavbarProf';
 import "./Main.css";
-import image1 from "../images/img-4.jpg";
-// import image2 from "../images/img-8.jpg";
-// import image3 from "../images/img-home.jpg";
+
 import like_icon from "../images/Like.png";
 
 const Main = () => {
     const [data, setData] = useState([]);
 
     useEffect(()=>{
-        fetch('/viewmyfeed', {
+        fetch('/viewallposts', {
             headers: {
                 "Authorization":"Bearer " + localStorage.getItem("jwt")
             }
@@ -26,18 +24,22 @@ const Main = () => {
     <div className="main-page">
         <Navbar />
         {
-            data.map(item => {
+            /* Make a copy of the data posts array, 
+            and reverse it to display newest posts first */
+            data.slice(0).reverse().map(item => {
                 return (
-                    <div className="main-container">
+                    <div className="main-container" key={item._id}>
                         <div className="main-post-container">
-                            <div className="user-main-info">User Name</div>
-                            <img src={image1} alt="User" className="user-main-image" />
+                            <div className="user-main-info">
+                                <p>{item.postedByUName}</p>
+                            </div>
+                            <img src={item.photo} alt="User" className="user-main-image" />
                             <div className="main-icons">
                                 <img src={like_icon} alt="Like"/>
                             </div>
                             <div className="main-post-content">
-                                <h3>Is it working?</h3>
-                                <p>This is actually working...or not.</p>
+                                <h3>{item.title}</h3>
+                                <p>{item.body}</p>
                                 <input type="text" placeholder="Add a comment"/>
                             </div>
                         </div>
