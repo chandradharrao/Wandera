@@ -9,6 +9,7 @@ const NavbarMain = () => {
             <a href='/'><img className="logo" src={logo} alt="Logo" width="260px" height="auto" /></a>
             <nav>
                 <ul className="nav-links">
+                    <li><a href = '/search'>Find Wanderers</a></li>
                     <li><a href="/main">Explore</a></li>
                     <li><a href="/forum">Discuss</a></li>
                     <li><a href="/login">Login</a></li>
