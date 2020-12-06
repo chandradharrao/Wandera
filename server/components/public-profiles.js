@@ -17,9 +17,10 @@ mongoose.Promise = global.Promise;
 mongoose.set('useFindAndModify',false);
 
 // Click on the icon in the front end
-router.post('/viewprofile',(req, res) => {
+router.get('/viewprofile/:username',(req, res) => {
+    console.log("Called viewProfile Route");
     // Find the user recieved from the front end in the user db
-    User.findOne({username:req.body.username}).then((foundUser)=>{
+    User.findOne({username:req.params.username}).then((foundUser)=>{
         // If user found, fetch all the posts of the user from backend and send to the front end
         Post.find({postedByID:foundUser._id,postedByUName:foundUser.username}).exec((err,postsFound)=>{
             if (err) {
