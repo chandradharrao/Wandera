@@ -136,7 +136,16 @@ router.post('/login', (req, res) => {
 
                     /* This is the token given to the user upon logging in successfully,
                     this will be used to keep track of the user and allow him to access protected resources */
-                    res.json({token : token}); 
+                    res.json({token : token, user : {
+                        name: foundData.first_name + ' ' + foundData.last_name,
+                        email: foundData.email,
+                        _id: foundData._id,
+                        followers: foundData.followers,
+                        following: foundData.following,
+                        username: foundData.username,
+                        pic: foundData.profile_pic
+                    }});
+                    return; 
                 } else {
                     console.log("Your username and password didn't match!");
                     return res.status(422).json({message: "Your username and password didn't match"})

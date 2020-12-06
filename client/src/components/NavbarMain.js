@@ -12,7 +12,7 @@ const NavbarMain = () => {
                     <li><a href="/main">Explore</a></li>
                     <li><a href="/forum">Discuss</a></li>
                     <li><a href="/login">Login</a></li>
-                    <li><a href='/sign-up'><button className="button">SIGN UP</button></a></li>
+                    <li><a href='/sign-up'><button className="standout-button">SIGN UP</button></a></li>
                 </ul>
             </nav>
         </header>

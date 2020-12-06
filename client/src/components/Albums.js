@@ -1,21 +1,31 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import "./Albums.css";
-import image1 from "../images/img-6.jpg"
-import image2 from "../images/img-1.jpg"
-import image3 from "../images/img-2.jpg"
-import image4 from "../images/img-3.jpg"
-import image5 from "../images/img-4.jpg"
 
 const Albums = () => {
+    const [myPosts, setPosts] = useState([]);
+
+    useEffect(() => {
+        fetch('/viewmyposts', {
+            headers: {
+                "Authorization":"Bearer " + localStorage.getItem("jwt")
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            setPosts(data.myPost);
+        })
+    }, []);
+
     return (
         <div className="albums">
             <div className="albums-container">
-                {/* <Album /> */}
-                <img src={image1} alt="example"/>
-                <img src={image2} alt="example"/>
-                <img src={image3} alt="example"/>
-                <img src={image4} alt="example"/>
-                <img src={image5} alt="example"/>
+                {
+                    myPosts.slice(0).reverse().map(item => {
+                        return (
+                            <img src={item.photo} alt={item.title} key={item._id}/>
+                        )
+                    })
+                }
             </div>
         </div>
     )

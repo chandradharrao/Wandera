@@ -15,17 +15,18 @@ const RouteControl = () => {
   const history = useHistory();
   // eslint-disable-next-line no-unused-vars
   const {state, dispatch} = useContext(UserContext);
-
+  
   useEffect(() => {
     /* Acquire current authentication information
      from JSON data in the storage. Make sure the user is logged in. */
     const user = localStorage.getItem("user");
-    console.log(`User local storage item: ${user}`);
     if (user) {
       /* Make sure the user is logged in if the browser
       is not logged on and is closed */
       dispatch({type: "USER", payload: user});
-    } else {
+      console.log(`User local storage item: ${user}`);
+    }
+     else {
       if(!history.location.pathname.startsWith('/reset'))
           /* If not, redirect to login page */
           history.push('/login');

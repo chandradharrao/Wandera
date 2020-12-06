@@ -26,7 +26,7 @@ const Login = () => {
         });
         
         const file = await res.json();
-        console.log('File: ', file);
+        console.log('File: ', JSON.stringify(file));
     
         if (res.status === 404) {
             alert('This account does not exist. Please sign up to create an account.');
