@@ -1,17 +1,19 @@
 import React,{useState} from 'react'
 import Result from "./Result";
-import './Search.css';
-import bgImg from '../images/Maps.jpg';
 import Navbar from '../components/NavbarProf';
+import './Search.css';
 
-const Search = ()=>{
+import bgImg from '../images/Maps.jpg';
+
+const Search = () => {
 
     const [searchTxt, setTxt] = useState("");
 
-    const inptEvent = (event)=>{
+    const inptEvent = (event) => {
         const data = event.target.value;
         setTxt(data);
     }
+
     const newStyle = {
         width: "100%",
         height: "100vh",
@@ -32,7 +34,7 @@ const Search = ()=>{
                 </div>
             <div>
                 <br></br>
-                {searchTxt === '' ? null :<Result data = {searchTxt}/>}
+                {searchTxt === '' ? null : <Result data = {searchTxt}/>}
             </div>
         </div>
         </div>
