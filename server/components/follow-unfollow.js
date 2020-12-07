@@ -27,20 +27,31 @@ profile, sends the ID of the profile clicked. */
 // The followers array of the profile clicked should be populated. 
 // The following array of the user who clicked the follow button should be populated.
 
-router.put('/follow', login_authorize, (req, res) => {
+/*router.put('/follow', login_authorize, (req, res) => {
     var Celebrity;
     var Me;
+    var toFollowID = req.body.toFollowID;
+    console.log("The foundUser parameter is " + toFollowID)
     
     var theOrdinaryMe = {
         follow_unfollowID: req.user._id,
         follow_unfollowUsername: req.user.username
     };
 
-    if((req.body.toFollowID).toString() === (req.user._id).toString()) {
+    User.find({username:req.body.toFollowuname}).exec((err,foundUser)=>{
+        if(err)
+            return res.status(422).json({error:err});
+        if(toFollowID === undefined){
+            console.log(`Assigning ${foundUser} to ${toFollowID}`)
+            toFollowID = foundUser._id;
+        }
+    })
+
+    if((toFollowID).toString() === (req.user._id).toString()) {
         return res.status(422).json({message:"You can't follow yourself :)"});
     }
     // Push to the followers array of the toUnFollowID user
-    User.findByIdAndUpdate(req.body.toFollowID, {
+    User.findByIdAndUpdate(toFollowID, {
         $push:{followers:theOrdinaryMe}
     }, {new: true}, (err, result) => {
         if(err) {
@@ -49,7 +60,7 @@ router.put('/follow', login_authorize, (req, res) => {
         Celebrity = result;
         // Update the follwing array of the user who followed toUnFollowID
         var theCelebrity = {
-            follow_unfollowID:req.body.toFollowID,
+            follow_unfollowID:toFollowID,
             follow_unfollowUsername:Celebrity.username
         };
         User.findByIdAndUpdate(req.user._id, {
@@ -63,6 +74,60 @@ router.put('/follow', login_authorize, (req, res) => {
             return res.status(200).json({message: "Successfully Followed"});
         })
     })
+})*/
+
+router.put('/follow', login_authorize, (req, res) => {
+    var Celebrity;
+    var Me;
+    var toFollowID = req.body.toFollowID;
+    
+    var theOrdinaryMe = {
+        follow_unfollowID: req.user._id,
+        follow_unfollowUsername: req.user.username
+    };
+
+    Promise.all([User.find({username:req.body.toFollowuname}).exec()]).then(([foundUser])=>{
+        console.log("the type of found user is " + typeof foundUser)
+        if(!foundUser)
+            return res.status(422).json({error:"User not found"});
+        if(toFollowID === undefined){
+            console.log(`This is the user found on db ${foundUser[0]}`);
+            toFollowID = foundUser[0]._id;
+            //console.log(`The toFollowID is ${foundUser._id}`);
+            if((toFollowID).toString() === (req.user._id).toString()) {
+                console.log("You can't follow yourself");
+                return res.status(422).json({message:"You can't follow yourself :)"});
+            }
+            // Push to the followers array of the toUnFollowID user
+            User.findByIdAndUpdate(toFollowID, {
+                $push:{followers:theOrdinaryMe}
+            }, {new: true}, (err, result) => {
+                if(err) {
+                    console.log("Unable to push...");
+                    return res.status(404).json({error:err});
+                }
+                Celebrity = result;
+                // Update the follwing array of the user who followed toUnFollowID
+                var theCelebrity = {
+                    follow_unfollowID:toFollowID,
+                    follow_unfollowUsername:Celebrity.username
+                };
+                User.findByIdAndUpdate(req.user._id, {
+                    $push: {following:theCelebrity}
+                }, {new: true}, (err, result) => {
+                    if(err) {
+                        return res.status(422).json({error:err});
+                    }
+                    Me = result;
+                    console.log(`${Celebrity.username} got followed by ${Me.username} successfully!`)
+                    return res.status(200).json({message: "Successfully Followed"});
+                })
+            })
+        }
+    }).catch(err=>{
+        console.log(err);
+        return res.status(422).json({error:err});
+    })
 })
 
 /* The authenticated user, on clicking the unfollow button 
@@ -71,7 +136,7 @@ on another profile, sends the ID of the profile clicked. */
 // The unfollowers array of the profile clicked is depopulated.
 // The following array of the user who who unfollows is depopulated.
 
-router.put('/unfollow', login_authorize, (req, res) => {
+/*router.put('/unfollow', login_authorize, (req, res) => {
     var Celebrity;
     var Me;
     var theOrdinaryMe = {
@@ -102,7 +167,61 @@ router.put('/unfollow', login_authorize, (req, res) => {
             return res.status(200).json({message:"Successfully Unfollowed"});
         });
     });
-});
+});*/
+
+router.put('/unfollow', login_authorize, (req, res) => {
+    var Celebrity;
+    var Me;
+    var toUnFollowID = req.body.toUnFollowID;
+    
+    var theOrdinaryMe = {
+        follow_unfollowID: req.user._id,
+        follow_unfollowUsername: req.user.username
+    };
+
+    Promise.all([User.find({username:req.body.toUnFollowuname}).exec()]).then(([foundUser])=>{
+        console.log("the type of found user is " + typeof foundUser)
+        if(!foundUser)
+            return res.status(422).json({error:"User not found"});
+        if(toUnFollowID === undefined){
+            console.log(`This is the user found on db ${foundUser[0]}`);
+            toUnFollowID = foundUser[0]._id;
+            //console.log(`The toFollowID is ${foundUser._id}`);
+            if((toUnFollowID).toString() === (req.user._id).toString()) {
+                console.log("You can't Unfollow yourself");
+                return res.status(422).json({message:"You can't unfollow yourself :)"});
+            }
+            // Pull the followers array of the to UnFollowID user
+            User.findByIdAndUpdate(toUnFollowID, {
+                $pull:{followers:theOrdinaryMe}
+            }, {new: true}, (err, result) => {
+                if(err) {
+                    console.log("Unable to pull...");
+                    return res.status(404).json({error:err});
+                }
+                Celebrity = result;
+                // Update the follwing array of the user who followed toUnFollowID
+                var theCelebrity = {
+                    follow_unfollowID:toUnFollowID,
+                    follow_unfollowUsername:Celebrity.username
+                };
+                User.findByIdAndUpdate(req.user._id, {
+                    $pull: {following:theCelebrity}
+                }, {new: true}, (err, result) => {
+                    if(err) {
+                        return res.status(422).json({error:err});
+                    }
+                    Me = result;
+                    console.log(`${Celebrity} got unfollowed by ${Me} successfully!`)
+                    return res.status(200).json({message:"Successfully Unfollowed"});
+                })
+            })
+        }
+    }).catch(err=>{
+        console.log(err);
+        return res.status(422).json({error:err});
+    })
+})
 
 // Fetch all users 
 router.get("/get-all-users", (req, res) => {

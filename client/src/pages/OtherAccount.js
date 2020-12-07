@@ -27,6 +27,24 @@ const Account = () => {
         })
     }, [username]);
 
+    const followUser = ()=>{
+        fetch('/follow',{
+            method:"PUT",
+            headers:{
+                "Content-Type":"Application/json",
+                "Authorization":"Bearer " + localStorage.getItem('jwt') 
+            },
+            body:JSON.stringify({
+                toFollowuname:username
+            })
+        }).then(res=>res.json()).then(data=>{
+            console.log("Started following...");
+            console.log(data)
+        }).catch(err=>{
+            console.log(err);
+        })
+    }
+
     return (
         <div className="account-landing">
             <Navbar />
@@ -41,6 +59,7 @@ const Account = () => {
                             <div className="Username">{User.username}</div>
                             <div className="user-stats">
                                 <span>{User.followers ? User.followers.length : console.log("Await")} followers</span>
+                                <button id = "follow-bttn" onClick={()=>followUser()}>Follow</button>
                                 <span>{User.following ? User.following.length : console.log("Await")} following</span>
                             </div> 
                         </div>
