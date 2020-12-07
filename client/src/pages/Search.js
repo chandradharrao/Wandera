@@ -14,12 +14,12 @@ const Search = ()=>{
     }
     const newStyle = {
         width: "100%",
-        height: "700px",
+        height: "100vh",
         backgroundImage:`url(${bgImg})`
     };
 
     return(
-        <div style = {newStyle}>
+        <div className="search-page" style = {newStyle}>
             <Navbar />
             <div className='search-component'>
                 <h1 className = "heading">Search</h1>
