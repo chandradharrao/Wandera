@@ -4,6 +4,7 @@ import {useParams} from 'react-router-dom';
 import "../components/About.css";
 import "../components/Albums.css";
 import Navbar from '../components/NavbarProf';
+import "./OtherAccount.css";
 
 import ProfilePic from "../images/profilepic.jpg";
 
@@ -108,7 +109,11 @@ const Account = () => {
             unfollowUser();
         }
         else{
-            followUser();
+            if(username !== JSON.parse(localStorage.getItem('user')).username)
+                followUser();
+            else{
+                alert("You cannot follow yourself")
+            }
         }
     }
 
@@ -126,7 +131,7 @@ const Account = () => {
                             <div className="Username">{User.username}</div>
                             <div className="user-stats">
                                 <span>{FollowersCount} followers</span>
-                                <button id = "follow-bttn" onClick={()=>unfollow_follow()}>{isFollowed?"Unfollow":"Follow"}</button>
+                                <button id = "follow-bttn" onClick={()=>unfollow_follow()}>{isFollowed?"Unfollow -":"Follow +"}</button>
                                 <span>{User.following ? User.following.length : console.log("Await")} following</span>
                             </div> 
                         </div>
