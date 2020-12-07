@@ -12,6 +12,8 @@ const Account = () => {
 
     const [User, setUser] = useState([]);
     const [Posts, setPosts] = useState([]);
+    const [FollowersCount, setFollowersCount] = useState(0);
+    const [isFollowed, setisFollowed] = useState(false);
 
     useEffect(() => {
         fetch(`/viewprofile/${username}`, {
@@ -24,8 +26,44 @@ const Account = () => {
             console.log(data);
             setUser(data.userInfo);
             setPosts(data.posts);
+        }).catch(err=>{
+            console.log(err)
         })
     }, [username]);
+
+    //fetch the followers count onmount to display
+    useEffect(() => {
+        fetch(`/get-user-followers-details?username=${username}`, {
+            method:"GET",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            setFollowersCount(data.num_followers);
+            setisFollowed(data.isFollowed);
+        }).catch(err=>{
+            console.log(err)
+        })
+    }, [])
+
+    useEffect(() => {
+        fetch(`/get-user-followers-details?username=${username}`, {
+            method:"GET",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            setisFollowed(data.isFollowed);
+        }).catch(err=>{
+            console.log(err)
+        })
+    }, [FollowersCount])
 
     const followUser = ()=>{
         fetch('/follow',{
@@ -40,9 +78,38 @@ const Account = () => {
         }).then(res=>res.json()).then(data=>{
             console.log("Started following...");
             console.log(data)
+            setFollowersCount(data.num_followers);
         }).catch(err=>{
             console.log(err);
         })
+    }
+
+    const unfollowUser = ()=>{
+        fetch('/unfollow',{
+            method:"PUT",
+            headers:{
+                "Content-Type":"Application/json",
+                "Authorization":"Bearer " + localStorage.getItem('jwt') 
+            },
+            body:JSON.stringify({
+                toUnFollowuname:username
+            })
+        }).then(res=>res.json()).then(data=>{
+            console.log("Started unfollowing...");
+            console.log(data);
+            setFollowersCount(data.num_followers);
+        }).catch(err=>{
+            console.log(err);
+        })
+    }
+
+    const unfollow_follow = ()=>{
+        if(isFollowed){
+            unfollowUser();
+        }
+        else{
+            followUser();
+        }
     }
 
     return (
@@ -55,11 +122,11 @@ const Account = () => {
                             <img src={ProfilePic} alt="User"/>
                         </div>
                         <div className='user-info'>
-                            <div className="Name">{User.name}</div>
+                            <div className="Name">{User.username}</div>
                             <div className="Username">{User.username}</div>
                             <div className="user-stats">
-                                <span>{User.followers ? User.followers.length : console.log("Await")} followers</span>
-                                <button id = "follow-bttn" onClick={()=>followUser()}>Follow</button>
+                                <span>{FollowersCount} followers</span>
+                                <button id = "follow-bttn" onClick={()=>unfollow_follow()}>{isFollowed?"Unfollow":"Follow"}</button>
                                 <span>{User.following ? User.following.length : console.log("Await")} following</span>
                             </div> 
                         </div>
