@@ -190,12 +190,12 @@ router.delete('/deletepost', login_authorize, (req, res) => {
     })
 })
 
-router.post('/search-users',login_authorize,(req,res)=>{
-    let searchPattern = new RegExp('^' + req.body.query); //find all strings that start with the query given by user
-    User.find({username:{$regex : searchPattern}}).then((foundData)=>{
-        res.json({user:foundData.username});
+router.post('/searchusers',(req,res)=>{
+    let usersRegEx = new RegExp("^"+req.body.query);
+    User.find({username:{$regex:usersRegEx}}).then((foundData)=>{
+        res.status(200).json({users:foundData});
     }).catch((err)=>{
-        console.log(err);
+        res.status(422).json({error:err});
     })
 })
 
