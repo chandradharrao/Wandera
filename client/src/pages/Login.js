@@ -59,6 +59,10 @@ const Login = () => {
                             <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
                             <button className="form-submit" onClick={() => PostLoginData()}>LOGIN</button>
                         </div>
+                        <div className="no-account">
+                            Don't have an account?
+                            <a href="/sign-up"><button className="no-account">SIGN UP</button></a>
+                        </div>
                     </div>
                 </div>
             </div>

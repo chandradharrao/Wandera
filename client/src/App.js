@@ -30,7 +30,7 @@ const RouteControl = () => {
       dispatch({type: "USER", payload: user});
       console.log(`User local storage item: ${user}`);
     }
-     else {
+    else {
       if(!history.location.pathname.startsWith('/reset'))
           /* If not, redirect to login page */
           history.push('/login');
