@@ -8,6 +8,8 @@ import Post from "./pages/Post.js";
 import Main from "./pages/Main.js";
 import Forum from "./pages/Forum.js";
 import Search from "./pages/Search.js";
+import Profile from "./pages/Profile.js";
+
 
 import {reducer, initialState} from "./reducers/userReducer";
 export const UserContext = createContext();
@@ -44,6 +46,7 @@ const RouteControl = () => {
         <Route path='/main' exact component={Main} />
         <Route path='/forum' exact component={Forum} />
         <Route path='/search' exact component={Search} />
+        <Route path='/profile' exact component={Profile} />
     </Switch>
   )
 }

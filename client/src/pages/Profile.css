@@ -1,9 +1,9 @@
-.main-page {
+.profile-page {
   width: 100%;
   margin: auto;
 }
 
-.main-post-container {
+.profile-post-container {
   width: 40em;
   border: 1px solid rgb(221, 221, 221);
   box-shadow: 0 0 15px 3px rgba(0, 0, 0, 0.253);
@@ -15,15 +15,7 @@
   align-content: center;
 }
 
-.user-main-info {
-  margin-left: 1em;
-  padding: 0;
-  /* font-weight: bold; */
-  font-family: "Cormorant_Garamond";
-  font-size: 1.75em;
-}
-
-.user-main-image {
+.user-profile-image {
   margin: auto;
   display: block;
   max-height: auto;
@@ -32,12 +24,12 @@
   height: auto;
 }
 
-.main-post-content {
+.profile-post-content {
   margin: 0 2em 1.5em 2em;
   font-size: 1.2em;
 }
 
-.main-post-content input[type="text"] {
+.profile-post-content input[type="text"] {
   outline: none;
   width: 100%;
   padding: 0.5em 1em;
@@ -50,18 +42,23 @@
   font-size: 1em;
 }
 
-.main-post-content input[type="text"]:focus {
+.profile-post-content input[type="text"]:hover {
+  border-bottom: 0.5px solid #bdbdbd;
+  box-shadow: 0 0 15px 4px rgba(56, 56, 56, 0.39);
+}
+
+.profile-post-content input[type="text"]:focus {
   border: 0.5px solid #0d0838;
 }
 
-.main-icons img {
+.profile-icons img {
   max-width: 2em;
   max-height: 2em;
   margin: 0.5em;
   cursor: pointer;
 }
 
-.main-icons {
+.profile-icons {
   display: flex;
   font-family: Poppins;
   font-weight: bold;
@@ -69,7 +66,7 @@
   margin: 1em auto 0 2em;
 }
 
-#post-comment input[type="button"] {
+.profile-post-comment input[type="button"] {
   margin-top: 0.7em;
   padding: 0.1em;
   border-radius: 0.2em;
@@ -81,12 +78,12 @@
   background-color: rgb(49, 49, 49);
 }
 
-.comment-section {
+.profile-comment-section {
   margin-left: 3em;
   padding: 0.5em;
 }
 
-.comments p {
+.profile-comments p {
   border: 1px solid rgb(86, 86, 87);
   background-color: rgb(248, 248, 248);
   border-radius: 5px;
@@ -95,8 +92,24 @@
   padding: 0.4em;
 }
 
-.comment-author {
+.profile-comment-author {
   font-family: Cormorant_Garamond;
   font-size: 1em;
   margin-bottom: 0.2em;
+}
+
+.delete-logo {
+  float: right;
+  max-width: 0.5em;
+  max-height: 0.5em;
+  margin-left: 2em;
+  cursor: pointer;
+}
+
+.no-posts {
+  width: 50%;
+  margin-left: 14em;
+  margin-top: 8em;
+  font-family: Cormorant_Garamond;
+  font-size: 2em;
 }

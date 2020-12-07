@@ -1,6 +1,5 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import Navbar from '../components/NavbarProf';
-import UserContext from "../App";
 import "./Main.css";
 
 import like_icon from "../images/Like.png";
@@ -16,8 +15,8 @@ const Main = () => {
             }
         })
         .then(res => res.json())
-        .then(mainPosts => {
-            setmainPosts(mainPosts.posts);
+        .then(data => {
+            setmainPosts(data.posts);
         })
      });
 
@@ -104,26 +103,6 @@ const Main = () => {
         })
     }
 
-    const Delete = (post_id) => {
-        fetch(`/deletepost`, {
-            method:"delete",
-            headers:{
-                Authorization:"Bearer " + localStorage.getItem("jwt")
-            },
-            body: JSON.stringify({
-                post_id
-            })
-        })
-        .then(res => res.json())
-        .then(result => {
-            console.log(result)
-            const toDelete = mainPosts.filter(item=>{
-                return item._id !== result._id
-            })
-            setmainPosts(toDelete);
-        })
-    }
-
     return (
     <div className="main-page">
         <Navbar />
@@ -151,12 +130,12 @@ const Main = () => {
                                     {
                                         item.comments.map(comment => {
                                             return(
-                                            <p className="comments" key={comment._id}>
+                                            <div className="comments" key={comment._id}>
                                                 <span className="comment-author">
                                                     {comment.authorName}
                                                 </span><br/>
                                                 <p>{comment.content}</p>
-                                            </p>
+                                            </div>
                                             )
                                         })
                                     }

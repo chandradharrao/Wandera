@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
 import {UserContext} from "../App";
 import "./About.css";
-import Albums from "./Albums";
 import ProfilePic from "../images/profilepic.jpg";
 
 const About = () => {

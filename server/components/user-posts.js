@@ -169,21 +169,22 @@ router.put('/comment', login_authorize, (req, res)=>{//we use put for 'updating'
     })
 })
 
-router.delete('/deletepost', login_authorize, (req,res) => {
+router.delete('/deletepost', login_authorize, (req, res) => {
+    console.log(`Request: ${req.body.post_id}`);
     Post.findOne({_id:req.body.post_id})
     .exec((err, thepost) => {   //pass the id of the post to be deleted through the front end
         if(err || !thepost) {
+            console.log(`Error in deleting 1: ${err}`);
+            console.log(`The post instead? : ${thepost}`)
             return res.status(422).json({error:err});
         }
         if(thepost.postedById.toString() === req.user._id.toString() && thepost.postedByUName === req.user.username){//if the post is published by user itself then only we can delete
-            thepost.remove().then((result) => {
-                res.status(200).json({
-                    message:"Deleted successfully"
-                });
+            thepost.remove()
+            .then((result) => {
+                res.status(200).json({message:result});
             }).catch((err) => {
-                res.status(422).json({
-                    error:err
-                })
+                console.log(`Error in deleting 2: ${err}`);
+                res.status(422).json({error: err});
             })
         }
     })
