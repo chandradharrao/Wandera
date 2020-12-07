@@ -15,7 +15,7 @@ const PostSchema = new mongoose.Schema({
         type:String,   // URL of the photo posted
         required:true
     },
-    postedById:{
+    postedById: {
         /* Each user will be identified by object id,
         hence this field should be object id data type. */
         type:mongoose.Schema.Types.ObjectId, 
@@ -23,7 +23,7 @@ const PostSchema = new mongoose.Schema({
          collection.This is how we create a relationship */
         ref:"WandererCollection"
     },
-    postedByUName:{
+    postedByUName: {
         type:String,
         required:true
     },
