@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import {UserContext} from "../App";
 import "./About.css";
+import Albums from "./Albums";
 import ProfilePic from "../images/profilepic.jpg";
 
 const About = () => {
@@ -16,7 +17,6 @@ const About = () => {
                     <div className="Name">{state ? JSON.parse(state).name : console.log("State is null")}</div>
                     <div className="Username">{state ? JSON.parse(state).username : console.log("State is null")}</div>
                     <div className="user-stats">
-                        <span>10 Stories</span>
                         <span>{state ? JSON.parse(state).followers.length : console.log("State is null")} followers</span>
                         <span>{state ? JSON.parse(state).following.length : console.log("State is null")} following</span>
                     </div> 
