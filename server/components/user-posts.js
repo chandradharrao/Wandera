@@ -52,7 +52,7 @@ router.post('/createpost', login_authorize, (req, res) => {
     })
 })
 
-router.get('/viewallposts', (req,res) => {
+router.get('/viewallposts', (req, res) => {
     Post.find()
     .then((docs) => {
         res.status(200).json({posts:docs});
@@ -83,7 +83,7 @@ router.get("/viewmyfeed", login_authorize, (req, res) => {
     })
 })
 
-router.get('/viewmyposts', login_authorize, (req,res) => {
+router.get('/viewmyposts', login_authorize, (req, res) => {
     Post.find({
         postedById:req.user._id
     })
@@ -96,6 +96,19 @@ router.get('/viewmyposts', login_authorize, (req,res) => {
     })
 })
 
+router.get('/viewpostsof/:username', login_authorize, (req, res) => {
+    Post.find({
+        postedByUName: req.params.username
+    })
+    .then((data) => {
+        console.log(`Posts found! All posts of this user, ${req.params.username}: \n ${data}`);
+        res.status(200).json({allPosts: data})
+    })
+    .catch((err) => {
+        console.log(`Error in view-posts-of router: {err}`);
+        res.status(422).json({error:"Not able to fetch the user's posts."});
+    })
+})
 
 //havent tested since it will be a bit irritating to test using postman,lets test it after donf front end
 router.put('/like', login_authorize, (req, res) => {//we use put for 'updating' the likes array

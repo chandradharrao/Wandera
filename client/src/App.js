@@ -9,7 +9,8 @@ import Main from "./pages/Main.js";
 import Forum from "./pages/Forum.js";
 import Search from "./pages/Search.js";
 import Profile from "./pages/Profile.js";
-
+import OtherAccount from "./pages/OtherAccount.js";
+import OtherProfile from "./pages/OtherProfile.js";
 
 import {reducer, initialState} from "./reducers/userReducer";
 export const UserContext = createContext();
@@ -42,11 +43,13 @@ const RouteControl = () => {
         <Route path='/sign-up' exact component={Signup} />
         <Route path='/login' exact component={Login} />
         <Route path='/account' exact component={Account} />
+        <Route path='/account/:username' component={OtherAccount} />
         <Route path='/post' exact component={Post} />
         <Route path='/main' exact component={Main} />
         <Route path='/forum' exact component={Forum} />
         <Route path='/search' exact component={Search} />
         <Route path='/profile' exact component={Profile} />
+        <Route path='/profile/:username' component={OtherProfile} />
     </Switch>
   )
 }

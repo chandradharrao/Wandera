@@ -23,6 +23,16 @@
   font-size: 1.75em;
 }
 
+.user-main-info a {
+  color: #2c2c2c;
+  text-decoration: none;
+}
+
+.user-main-info a:hover {
+  color: #696969;
+  font-weight: bold;
+}
+
 .user-main-image {
   margin: auto;
   display: block;
