@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const path = require("path");
+const url = require('url');
 
 // Importing the user model as User
 const User = require('../models/wanderer');
@@ -17,12 +18,11 @@ mongoose.Promise = global.Promise;
 mongoose.set('useFindAndModify',false);
 
 // Click on the icon in the front end
-router.get('/viewprofile/:username',(req, res) => {
-    console.log("Called viewProfile Route");
+router.get('/viewprofile',(req, res) => {
     // Find the user recieved from the front end in the user db
-    User.findOne({username:req.params.username}).then((foundUser)=>{
+    User.findOne({username:req.query.username}).then((foundUser)=>{
         // If user found, fetch all the posts of the user from backend and send to the front end
-        Post.find({postedByID:foundUser._id,postedByUName:foundUser.username}).exec((err,postsFound)=>{
+        Post.find({postedByUName:foundUser.username}).exec((err,postsFound)=>{
             if (err) {
                 return res.status(422).json({error:err})
             }
