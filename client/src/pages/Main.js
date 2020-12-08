@@ -23,6 +23,7 @@ const Main = () => {
         })
         .then(res => res.json())
         .then(data => {
+            // console.log(data)
             setmainPosts(data.posts);
         })
      });
@@ -85,21 +86,6 @@ const Main = () => {
         })
     }
 
-    const clickLikeButton = (post_id)=>{
-        Promise.resolve().then(()=>{
-            if(heart === heartIcons.like_icon){
-                console.log("unliking...")
-                setheart(heart=> heart = heartIcons.notliked_icon);
-                Unlike(post_id);
-            }
-            else{
-                console.log("liking...");
-                setheart(heart=> heart =heartIcons.like_icon);
-                Like(post_id);
-            }
-        })
-    }
-
     const Comment = (comment, post_id)=>{
         fetch('/comment',{
             method: "put",
@@ -153,8 +139,8 @@ const Main = () => {
                                 </div>
                                 <img src={item.photo} alt="User" className="user-main-image" />
                                 <div className="main-icons">
-                                    <img src={heart} alt="heart" onClick={() => clickLikeButton(item._id)}/>
-                                    <p>{item.likedBy.length}</p>
+                                    <img src={heart} alt="heart" onClick={() => Like(item._id)}/>
+                                    <p>{item.likedBy.length} Likes</p>
                                 </div>
                                 <div className="main-post-content">
                                     <h3>{item.title}</h3>

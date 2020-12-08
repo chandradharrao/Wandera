@@ -166,6 +166,17 @@ router.post('/login', (req, res) => {
     })
 });
 
+router.put('/updatepic', login_authorize, (req,res)=>{
+    User.findByIdAndUpdate(req.user._id,
+        {$set: {profile_pic: req.body.photo}}, {new:true},
+        (err,result) => {
+         if(err) {
+             return res.status(422).json({error:"Profile picture could not be posted."})
+         }
+         res.json(result)
+    })
+})
+
 router.post('/logout',(req,res)=>{
     req.user = '';
     if(!req.user){

@@ -131,7 +131,7 @@ const Account = () => {
                             <div className="user-stats">
                                 <span>{FollowersCount} followers</span>
                                 <span>{User.following ? User.following.length : console.log("Await")} following</span>
-                                <button id = "follow-bttn" onClick={()=>unfollow_follow()}>{isFollowed?"Unfollow -":"Follow +"}</button>
+                                <button className="account-page-buttons" onClick={()=>unfollow_follow()}>{isFollowed?"Unfollow -":"Follow +"}</button>
                             </div> 
                         </div>
                     </div>
