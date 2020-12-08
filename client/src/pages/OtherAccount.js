@@ -4,7 +4,6 @@ import {useParams} from 'react-router-dom';
 import "../components/About.css";
 import "../components/Albums.css";
 import Navbar from '../components/NavbarProf';
-import "./OtherAccount.css";
 
 import ProfilePic from "../images/profilepic.jpg";
 
@@ -48,7 +47,7 @@ const Account = () => {
         }).catch(err=>{
             console.log(err)
         })
-    }, [])
+    }, [username])
 
     useEffect(() => {
         fetch(`/get-user-followers-details?username=${username}`, {
@@ -64,7 +63,7 @@ const Account = () => {
         }).catch(err=>{
             console.log(err)
         })
-    }, [FollowersCount])
+    }, [FollowersCount, username])
 
     const followUser = ()=>{
         fetch('/follow',{
@@ -131,8 +130,8 @@ const Account = () => {
                             <div className="Username">{User.username}</div>
                             <div className="user-stats">
                                 <span>{FollowersCount} followers</span>
-                                <button id = "follow-bttn" onClick={()=>unfollow_follow()}>{isFollowed?"Unfollow -":"Follow +"}</button>
                                 <span>{User.following ? User.following.length : console.log("Await")} following</span>
+                                <button id = "follow-bttn" onClick={()=>unfollow_follow()}>{isFollowed?"Unfollow -":"Follow +"}</button>
                             </div> 
                         </div>
                     </div>

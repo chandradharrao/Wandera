@@ -42,3 +42,22 @@
   margin: 0.5em 0;
   font-size: 2.4vh;
 }
+
+#follow-bttn {
+  background: #3d3b3b;
+  box-shadow: 1px 0.5em grey;
+  border: none;
+  outline: none;
+  border-radius: 3em;
+  padding: 0.5em;
+  color: white;
+  font-family: Cormorant_Garamond;
+  width: 10em;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+#follow-bttn:hover {
+  background: #585757;
+  font-weight: bold;
+}
