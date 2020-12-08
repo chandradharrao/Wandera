@@ -4,13 +4,16 @@ import {UserContext} from '../App';
 import Navbar from '../components/NavbarProf';
 import "./Main.css";
 
-import like_icon from "../images/Like.png";
-import unlike_icon from "../images/Unlike.png";
+import like_icon from "../images/red_heart.png";
+import notliked_icon from "../images/heart.png";
+const heartIcons = {like_icon,notliked_icon}
 
 const Main = () => {
     const [mainPosts, setmainPosts] = useState([]);
 
     const {state, dispatch} = useContext(UserContext);
+
+    const [heart, setheart] = useState(heartIcons.notliked_icon)
 
     useEffect(() => {
         fetch('/viewallposts', {
@@ -23,6 +26,10 @@ const Main = () => {
             setmainPosts(data.posts);
         })
      });
+
+     useEffect(() => {
+         console.log("Changed img src..")
+     }, [heart])
 
     const Like = (post_id) => {
         fetch('/like', {
@@ -75,6 +82,21 @@ const Main = () => {
         })
         .catch(err => {
             console.log(err);
+        })
+    }
+
+    const clickLikeButton = (post_id)=>{
+        Promise.resolve().then(()=>{
+            if(heart === heartIcons.like_icon){
+                console.log("unliking...")
+                setheart(heart=> heart = heartIcons.notliked_icon);
+                Unlike(post_id);
+            }
+            else{
+                console.log("liking...");
+                setheart(heart=> heart =heartIcons.like_icon);
+                Like(post_id);
+            }
         })
     }
 
@@ -131,9 +153,8 @@ const Main = () => {
                                 </div>
                                 <img src={item.photo} alt="User" className="user-main-image" />
                                 <div className="main-icons">
-                                    <img src={like_icon} alt="Like" onClick={() => Like(item._id)} />
-                                    <img src={unlike_icon} alt="Unlike" onClick={() => Unlike(item._id)}/>
-                                    <p>{item.likedBy.length} Likes</p>
+                                    <img src={heart} alt="heart" onClick={() => clickLikeButton(item._id)}/>
+                                    <p>{item.likedBy.length}</p>
                                 </div>
                                 <div className="main-post-content">
                                     <h3>{item.title}</h3>
