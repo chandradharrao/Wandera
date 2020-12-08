@@ -79,6 +79,7 @@ video.home-video-1 {
   box-sizing: border-box;
   border: 0.05em solid rgb(241, 241, 241);
   cursor: pointer;
+  font-family: Cormorant_Garamond;
   font-weight: bold;
   font-size: 29px;
   color: rgb(241, 241, 241);

@@ -28,13 +28,13 @@ const RouteControl = () => {
       /* Make sure the user is logged in if the browser
       is not logged on and is closed */
       dispatch({type: "USER", payload: user});
-      console.log(`User local storage item: ${user}`);
+      console.log(`User local storage item: ${(user)}`);
     }
-     else {
-      if(!history.location.pathname.startsWith('/reset'))
-          /* If not, redirect to login page */
-          history.push('/login');
-    }
+    // else {
+    //   if(!history.location.pathname.startsWith('/reset'))
+    //       /* If not, redirect to login page */
+    //       history.push('/login');
+    // }
   }, [history, dispatch]);
   
   return (

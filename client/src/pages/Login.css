@@ -91,7 +91,28 @@
 @media screen and (max-width: 866px) {
   .login-container {
     background: #f8f7f7;
-    width: 75%%;
+    width: 75%;
     margin: auto;
   }
+}
+
+.no-account {
+  font-size: 1.2em;
+  margin: 0.2em 0 0 0.2em;
+}
+
+.no-account button {
+  width: 40%;
+  padding: 0.05em;
+  border: none;
+  border-bottom: 0.5px solid #c5c5c5;
+  box-shadow: 0 0 15px 4px rgba(163, 163, 163, 0.534);
+  margin-left: 0.5em;
+  box-sizing: border-box;
+  border-radius: 1em;
+  font-family: Cinzel;
+  font-weight: normal;
+  color: #cfcfcf;
+  background-color: #333232;
+  cursor: pointer;
 }
