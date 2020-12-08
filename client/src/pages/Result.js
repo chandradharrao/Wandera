@@ -30,7 +30,7 @@ const Result = (props) => {
                         <img id = "search-profile-pic" alt="Profile" src = {userDetails[i].profile_pic}/>
                         <div id = "search-followers">Followers : {userDetails[i].followers.length}
                         </div>
-                        <Link to = {"/viewprofile/"+userDetails[i].username}><button id = "visit-page-button" >View Profile</button></Link>
+                        <Link to = {"/account/"+userDetails[i].username}><button id = "visit-page-button" >View Profile</button></Link>
                     </div>
                 )
         }

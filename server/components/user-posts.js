@@ -135,7 +135,7 @@ router.put('/like', login_authorize, (req, res) => {//we use put for 'updating' 
             }, {
                 new: true //return the modified record
             })
-            .exec((err, result) => {//execute te query
+            .exec((err, result) => {//execute the query
                 if (err) {
                     return res.status(422).json({error:err});
                 }
