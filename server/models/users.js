@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const { stringify } = require('querystring');
-const FollowUnfollowSchema = require('./follow-unfollow-user');
 
 // Creating the 'user' schema
 const userSchema = new mongoose.Schema({
@@ -36,10 +34,17 @@ const userSchema = new mongoose.Schema({
         type:String,
         default: "This user prefers to keep an air of mystery..."
     },
-    followers:[{type:FollowUnfollowSchema}], // Users who follow you
-    following:[{type:FollowUnfollowSchema}]  // Users you follow
 })
 
-// Export the model so that data of userSchema type is saved in WandererCollection
-const User = mongoose.model("WandererCollection", userSchema);
+userSchema.add({ followers:[
+    {type:mongoose.Schema.Types.ObjectID,ref:"Users"}
+] }) // Users who follow you
+
+userSchema.add({ following: [
+    {type:mongoose.Schema.Types.ObjectID,
+    ref:"Users"}
+] }) // Users you follow
+
+// Export the model so that a row of userSchema type can be saved in Users collection
+const User = mongoose.model("Users", userSchema);
 module.exports = User;

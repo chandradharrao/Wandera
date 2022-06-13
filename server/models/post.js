@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const CommentSchema = require('./comments');
-const LikeSchema = require('./like');
 
 const PostSchema = new mongoose.Schema({
     title:{
@@ -11,24 +10,20 @@ const PostSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    photo:{
-        type:String,   // URL of the photo posted
-        required:true
-    },
+    //list of photos in a post
+    photos: [ {type:String, required:true} ],
     postedById: {
         /* Each user will be identified by object id,
         hence this field should be object id data type. */
         type:mongoose.Schema.Types.ObjectId, 
-        /* The ID will refer to user in the "WandererCollection"
+        /* The ID will refer to user in the "Users Collection"
          collection.This is how we create a relationship */
-        ref:"WandererCollection"
-    },
-    postedByUName: {
-        type:String,
-        required:true
+        ref:"Users"
     },
     // An array that contains the users who liked the particular post
-    likedBy:[{type:LikeSchema}],
+    likedBy:[
+        {type:mongoose.Schema.Types.ObjectId,ref:"Users"}
+    ],
     comments:[{type:CommentSchema}],
     isDeleted:{
         type:Boolean,
@@ -36,6 +31,6 @@ const PostSchema = new mongoose.Schema({
     }
 })
 
-// "postCollection" collection will follow PostSchema when storing the data
-const Post = mongoose.model("PostCollection",PostSchema);
+// "Posts" collection will follow PostSchema when storing the data
+const Post = mongoose.model("Posts",PostSchema);
 module.exports = Post;
