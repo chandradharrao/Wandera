@@ -1,7 +1,7 @@
 const JWT = require('jsonwebtoken');
 const CONSTS = require('../components/constants');
 const mongoose = require('mongoose');
-const User = require('../models/wanderer');
+const User = require('../models/user');
 
 // Connect to mongoose
 mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);

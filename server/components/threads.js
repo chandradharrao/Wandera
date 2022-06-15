@@ -4,7 +4,7 @@ const path = require("path");
 const login_authorize = require('../middleware/login-authorize');
 
 // Importing the user model as User
-const Threads = require('../models/discussion_threads');
+// const Threads = require('../models/discussion_threads');
 const mongoose = require('mongoose');
 
 // Connect to mongoose

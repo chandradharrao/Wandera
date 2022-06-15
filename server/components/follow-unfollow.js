@@ -5,7 +5,7 @@ const CONSTS = require('./constants');
 const login_authorize = require('../middleware/login-authorize');
 
 // Importing the user model as User
-const User = require('../models/wanderer');
+const User = require('../models/user');
 const mongoose = require('mongoose');
 const router = require("./user-account");
 

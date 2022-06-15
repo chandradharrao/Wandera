@@ -7,7 +7,7 @@ const CONSTS = require('./constants');
 
 // Importing the user model as User
 const Post = require('../models/post');
-const User = require('../models/wanderer');
+const User = require('../models/user');
 
 // Connect to mongoose
 mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);

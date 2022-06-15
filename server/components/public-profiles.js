@@ -4,7 +4,7 @@ const path = require("path");
 const url = require('url');
 
 // Importing the user model as User
-const User = require('../models/wanderer');
+const User = require('../models/user');
 const Post = require('../models/post');
 const mongoose = require('mongoose');
 
