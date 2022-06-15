@@ -47,10 +47,7 @@ const createAccount = async (firstname,lastname,email,dob,username,password) => 
 router.post("/signup", (req, res) => {
     const firstname = req.body.fname;
     const lastname = req.body.lname;
-    const {email} = req.body;
-    const {dob} = req.body;
-    const {username} = req.body;
-    const {password} = req.body;
+    const {username,email,dob,password} = req.body;
     console.log(firstname+" "+lastname+" "+email+" "+dob+" "+username+" "+password)
 
     if (!firstname || !lastname || !email || !username) {
@@ -71,82 +68,49 @@ router.post("/signup", (req, res) => {
     }     
 });
 
+const signin = async (username,password)=>{
+    const foundUser = await User.findOne({username});
+    if(foundUser){
+        const doesMatch = bcrypt.compareSync(password,foundUser.password);
+        if(doesMatch){
+            const token = JWT.sign({username},CONSTS.JWT_SECRET);
+            return {token,user:foundUser};
+        }
+        return {token:null,user:null,message:"username and/or password doesnt match!"};
+    }
+    return {token:null,user:null,message:"Please create new account before signing in!"};
+}
+
 router.post('/login', (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+    const {username,password} = req.body;
 
     // Check if the user has entered all given fields
     if (!username && password){
         return res.status(422).json({error:"Enter the username."});
     } else if (username && !password){
         return res.status(422).json({error:"Enter the password."});
-    } else if (!username && ! password){
+    } else if (!username && !password){
         return res.status(422).json({error:"Enter both the username and password."});
     }
 
-    // If so, create the query object
-    const loginDetails = {
-        username:username,
-        password:password
-    };
+    signin(username,password)
+        .then(({token,user,message})=>{
+            if(!token || !user){
+                return res.status(422).json({message});
+            }
 
-    /* This promise returns the user with the entered username, if found (data not empty) */
-    User.findOne({username: loginDetails.username})
-    .then((foundData) => {
-        console.log(`Looking for the user, ${loginDetails.username} in database...`);
-        // Compare the password entered with that in the database
-        if (foundData) {
-            console.log("User with this email exists in the database.");
-
-            /* This promise waits to get the result of 
-            the compare boolean and then executes async */
-            bcrypt.compare(loginDetails.password, foundData.password)
-            .then((doesMatch) => {
-                
-                // If the password entered matches the one in the database
-                if(doesMatch) {
-                    console.log("Success! Redirecting to user dashboard...");
-                    
-                    /* JWT used to verify/authenticate users and identify them.
-                    Has details unlike session IDs that would have the reference
-                    to the details stored in the server reducing the load.
-                    They are signed to prevent users from manipulating.
-                    We use JWT so that users can access only their feed 
-                    or posts(protected resources) and not others. */
-
-                    // Replace the id of the database with the signed token
-                    const token = JWT.sign({_id: foundData._id}, CONSTS.JWT_SECRET);    
-
-                    /* This is the token given to the user upon logging in successfully,
-                    this will be used to keep track of the user and allow him to access protected resources */
-                    res.json({token : token, user : {
-                        name: foundData.first_name + ' ' + foundData.last_name,
-                        email: foundData.email,
-                        _id: foundData._id,
-                        followers: foundData.followers,
-                        following: foundData.following,
-                        username: foundData.username,
-                        pic: foundData.profile_pic
-                    }});
-                    return; 
-                } else {
-                    console.log("Your username and password didn't match!");
-                    return res.status(422).json({message: "Your username and password didn't match"})
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-        } else {
-            console.log("User login information not found in the database.");
-            res.status(404).json({
-                error: 'This account does not exist. Please sign up to create an account.'
-            });
-        }
-    })
-    .catch((err)=>{
-        console.log(err);
-    })
+            return res.json({token,user:{name: user.first_name + ' ' + user.last_name,
+            email: user.email,
+            _id: user._id,
+            followers: user.followers,
+            following: user.following,
+            username: user.username,
+            pic: user.profile_pic}})
+        })
+        .catch(err=>{
+            console.log(err);
+            return res.status(400).json({message:"internal server error!"});
+        })
 });
 
 router.put('/updatepic', login_authorize, (req,res)=>{
