@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const path = require("path");
 const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
 
@@ -73,7 +72,8 @@ const signin = async (username,password)=>{
     if(foundUser){
         const doesMatch = bcrypt.compareSync(password,foundUser.password);
         if(doesMatch){
-            const token = JWT.sign({username},CONSTS.JWT_SECRET);
+            //hash the _id attribute since its guarenteed to be unique
+            const token = JWT.sign({_id:foundUser._id},CONSTS.JWT_SECRET);
             return {token,user:foundUser};
         }
         return {token:null,user:null,message:"username and/or password doesnt match!"};
@@ -125,6 +125,7 @@ router.put('/updatepic', login_authorize, (req,res)=>{
 })
 
 router.post('/logout',(req,res)=>{
+    //remove the user attribute we had set earlier
     req.user = '';
     if(!req.user){
         return res.status(200).json({message:"You have been logged out!"});
