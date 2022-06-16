@@ -11,6 +11,7 @@ import Search from "./pages/Search.js";
 import Profile from "./pages/Profile.js";
 import OtherAccount from "./pages/OtherAccount.js";
 import OtherProfile from "./pages/OtherProfile.js";
+import Messenger from './pages/Messenger.js';
 
 import {reducer, initialState} from "./reducers/userReducer";
 export const UserContext = createContext();
@@ -50,6 +51,7 @@ const RouteControl = () => {
         <Route path='/search' exact component={Search} />
         <Route path='/profile' exact component={Profile} />
         <Route path='/profile/:username' component={OtherProfile} />
+        <Route path="/messenger" component={Messenger} />
     </Switch>
   )
 }

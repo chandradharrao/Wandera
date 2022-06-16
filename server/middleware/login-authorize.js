@@ -23,7 +23,7 @@ module.exports = async (req, res, next) => {
     try{
         const {_id} = await JWT.verify(
             assignedToken,
-            CONST.JWT_SECRET
+            CONSTS.JWT_SECRET
         );
 
         const foundUser = await User.findById(_id);

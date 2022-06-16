@@ -1,0 +1,43 @@
+.conversation{
+    display: flex;
+    align-items: center;
+    padding:2%;
+    margin-top: 5%;
+}
+
+.conversationImg{
+    height:15%;
+    width:15%;
+    border-radius: 50%;
+    margin-right: 15%;
+    object-fit: cover;
+}
+
+.conversationName{
+    flex: 7;
+    font-weight: 500;
+}
+
+.conversation:hover{
+    background-color: rgb(236, 241, 241);
+}
+
+.conversationRight{
+    display: flex;
+    justify-content: space-between;
+}
+
+.status{
+    flex: 3;
+    font-size: x-small;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.status.online{
+    color: rgb(148, 234, 125);
+}
+
+.status.offline{
+    color:red
+}

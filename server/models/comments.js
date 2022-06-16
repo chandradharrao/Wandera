@@ -10,10 +10,18 @@ const commentSchema = new mongoose.Schema({
         ref:"WandererCollection",
         required:true
     },
-    authorName:{
-        type:String,
-        required:true
+    likes:{
+        type:Number,
+        default:0,
+        required:false
     }
+});
+
+//replies are also of type comments
+commentSchema.add({
+    replies:[
+        {type:commentSchema}
+    ]
 })
 
 module.exports = commentSchema;

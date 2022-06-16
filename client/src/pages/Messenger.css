@@ -1,0 +1,50 @@
+.messenger{
+    height: calc(100vh-70px); /*get the size of top bar*/
+    display: flex;
+}
+
+.chatMenu{
+    flex:2.5;
+    border-right: 2px solid #ccc;
+}
+
+.chatBox{
+    flex: 7.5;
+    margin-left: 2%;
+}
+.chatBoxBottom{
+    margin-top: 5%;
+    display: flex; /*button and textarea should be next to each other*/
+    align-items: center;
+    justify-content: space-between; /*space between button and textarea*/
+}
+.messageInput{
+    width: 75%;
+    height: 100%;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+}
+.sendMessage{
+    background-color: rgb(118, 210, 159);
+    border:none;
+    padding: 2%;
+    font-size: medium;
+    color: aliceblue;
+}
+
+.chatBoxWrapper{
+    overflow-y: scroll;
+}
+
+.chatBoxWrapper,.chatMenuWrapper{
+    height: 75vh;
+    padding: 5%;
+}
+
+.chatMenuInput{
+    padding: 5%;
+    border:none;
+    border-bottom: 1px solid grey;
+    margin-bottom: 10%;
+}
