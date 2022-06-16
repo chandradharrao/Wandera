@@ -22,6 +22,12 @@ router.get('/protected', login_authorize, (req, res) => {
     res.json({message: "Welcom back! This is your home page!"});
 });
 
+router.get("/allusers",(req,res)=>{
+    User.find({},(err,users)=>{
+        return res.json({users})
+    })
+})
+
 const createAccount = async (firstname,lastname,email,dob,username,password) => {   
     const user_by_email = await User.findOne({email});
     const user_by_password = await User.findOne({username});
