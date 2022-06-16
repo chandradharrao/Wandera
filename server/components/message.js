@@ -1,9 +1,12 @@
 const CONSTS = require('./constants');
+const express = require("express");
 const router = express.Router()
 const ObjectId = require('mongodb').ObjectId;
+const loginAuth = require("../middleware/login-authorize");
 
-// Importing the user model as User
-const Chat = require('../models/chat');
+
+// Importing the Conversation model as User
+const Conversation = require("../models/conversations");
 const mongoose = require('mongoose');
 
 // Connect to mongoose
@@ -12,11 +15,14 @@ mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
 // Since mongoose promise is depricated, override it with NodeJS promises
 mongoose.Promise = global.Promise;
 
-//get all conversations of a user
-router.get("/conversations",async (req,res)=>{
+//get all conversations involving the user as a memeber
+router.get("/conversations",loginAuth,async (req,res)=>{
     try{
-        const conversations = await Chat.find({
-            authorID:new ObjectId(req.user._id)
+        //find conversations where the members list has user as an entity
+        const conversations = await Conversation.find({
+            members: {
+                $in: new ObjectId(req.user._id)
+            }
         });
         return res.status(200).json({conversations});
     }
@@ -26,9 +32,13 @@ router.get("/conversations",async (req,res)=>{
     }
 })
 
+//create a new conversation(upsert)
+router.post("/conversation",loginAuth,async (req,res)=>{
+})
 
-//create a new chat message
-router.post("/createChat",async (req,res)=>{
+
+//create a new chat message under a conversation
+router.post("/createChat",loginAuth,async (req,res)=>{
     try{
         const newChatMsg = new Chat({
             message:req.body.message,
@@ -46,7 +56,7 @@ router.post("/createChat",async (req,res)=>{
 });
 
 //get all chat messages of a user and friend pair
-router.get("/getMessages",(req,res)=>{
+router.get("/getMessages",loginAuth,(req,res)=>{
     try{
         const messages = Chat.find({
             authorID:new ObjectId(req.user._id),

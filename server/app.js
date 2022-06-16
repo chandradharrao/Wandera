@@ -10,6 +10,7 @@ app.use(require("./components/user-posts"));
 app.use(require("./components/public-profiles"));
 app.use(require("./components/follow-unfollow"));
 app.use(require("./components/threads"));
+app.use(require("./components/message"));
 
 app.listen(CONSTS.PORT, () => {
     console.log(`Listening at port ${CONSTS.PORT}...`);

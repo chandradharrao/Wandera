@@ -1,7 +1,9 @@
 import './Conversation.css';
 import React from 'react';
 
-const Conversation = ({isOnline})=>{
+const Conversation = ({conversation})=>{
+    const isOnline = false;
+    
     return(
         <div className='conversation'>
             <img 
