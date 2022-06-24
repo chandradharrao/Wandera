@@ -30,8 +30,9 @@ const Messenger = (props)=>{
     //whenever page refreshes, fetch all the conversations
     useEffect(()=>{
         getConversations()
-            .then(convsersationFriends=>{
-                setConversations(convsersationFriends);
+            .then(({conversations})=>{
+                setConversations(conversations);
+                console.log("State set!");
             })
             .catch(err=>console.log(err));
     },[])
@@ -43,8 +44,8 @@ const Messenger = (props)=>{
                     <input placeholder="Search for friends" className="chatMenuInput" />
                     {
                         //returns an array of the result
-                        conversations.map(c=>{
-                            <Conversation conversation={c} />
+                        conversations.map((c,i)=>{
+                            return <Conversation conversation={c} key={i}/>
                         })
                     }
                 </div>

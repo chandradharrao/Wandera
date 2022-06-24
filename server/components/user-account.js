@@ -8,6 +8,8 @@ const JWT = require('jsonwebtoken');
 const User = require("../models/user");
 const login_authorize = require('../middleware/login-authorize');
 const CONSTS = require('./constants');
+const { ObjectId } = require('mongodb');
+const { json } = require('body-parser');
 
 /* Connect to mongoose, override depracated
  Promise with the global one */
@@ -26,6 +28,19 @@ router.get("/allusers",(req,res)=>{
     User.find({},(err,users)=>{
         return res.json({users})
     })
+})
+
+router.get("/name",async (req,res)=>{
+   try{
+    console.log("Searching for " + req.query.otherid);
+    const otherUser = await User.findById(new ObjectId(req.query.otherid));
+    const name = otherUser.first_name + " " + otherUser.last_name;
+    return res.status(200).json({name});
+   }
+   catch(err){
+    console.log(err);
+    return res.status(500).json({message:"internal server error"});
+   }
 })
 
 const createAccount = async (firstname,lastname,email,dob,username,password) => {   
