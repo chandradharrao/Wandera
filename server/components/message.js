@@ -87,11 +87,12 @@ router.post("/createChat",loginAuth,async (req,res)=>{
 });
 
 //get all chat messages of a user and friend pair using their unique conversation_id
-router.get("/getMessages",loginAuth,async (req,res)=>{
+router.post("/getMessages",loginAuth,async (req,res)=>{
     try{
         const messages = await Chat.find({
             conversation_id:new ObjectId(req.body.conversation_id)
         });
+        
         return res.status(200).json({data:messages});
     }
     catch(err){
