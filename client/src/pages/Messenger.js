@@ -1,6 +1,6 @@
 import "./Messenger.css";
 import Conversation from "./Conversation";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Messege from "./Messege";
 
 const getConversations = async ()=>{
@@ -41,6 +41,9 @@ const Messenger = (props)=>{
 
     //re-fetch the messgae of current chat fater sending a messege
     const [refresh,setRefresh] = useState(false);
+
+    //dom element to scroll to
+    const scrollTo = useRef();
 
     //handle change in the text area data
     const handleTextareaChange = (event)=>{
@@ -123,11 +126,23 @@ const Messenger = (props)=>{
         }
 
         getMesseges()
+
+        //scroll into the reference dom element
+        if(scrollTo.current){
+            scrollTo.current.scrollIntoView({behaviour:"smooth"});
+        }
+
     },[currChat,refresh])
 
     useEffect(()=>{
         console.log("Messages set!");
         console.log(messeges);
+
+        //scroll into the reference dom element
+        if(scrollTo.current){
+            scrollTo.current.scrollIntoView({behaviour:"smooth"});
+        }
+        
     },[messeges])
 
     return(
@@ -149,10 +164,10 @@ const Messenger = (props)=>{
                     {/* is_my_msg prop is a boolean indicating weather i wrote the message or friend wrote it so that CSS can be applied! */}
                     {console.log("User " + JSON.parse(localStorage.getItem("user"))._id)}
                     {
-                        //only if a chat is selected, display messages of the chat. Else display no messages.
+                        /*only if a chat is selected, display messages of the chat. Else display no messages.*/
                         !currChat?<span className="no-conversation">Open a conversation to begin chatting!</span>:messeges?
                         messeges.map((m,i)=>{
-                            return <div><Messege is_my_msg={m.authorID.toString() === my_id.toString()} data={m.data} key={i} timestamp={m.created_at}/></div>
+                            return <div ref={scrollTo}><Messege is_my_msg={m.authorID.toString() === my_id.toString()} data={m.data} key={i} timestamp={m.created_at}/></div>
                         })
                         :null
                     }
