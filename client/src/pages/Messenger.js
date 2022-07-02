@@ -35,6 +35,51 @@ const Messenger = (props)=>{
 
     //current user id
     const my_id = JSON.parse(localStorage.getItem("user"))._id;
+
+    //user typed messege
+    const [sendMessege,setSendMessege] = useState('');
+
+    //re-fetch the messgae of current chat fater sending a messege
+    const [refresh,setRefresh] = useState(false);
+
+    //handle change in the text area data
+    const handleTextareaChange = (event)=>{
+        setSendMessege(event.target.value);
+        console.log(event.target.value);
+    }
+
+    //handle send button press
+    const postMessege = async ()=>{
+        const conversation_id = currChat.conversation_id;
+        const data = sendMessege;
+        const recieverID = currChat.other;
+        
+        if(sendMessege!=null){
+            const reqOptions = {
+                method:'POST',
+                headers:{'Content-Type':'application/json','Authorization':"Bearer " + localStorage.getItem('jwt')},
+                body:JSON.stringify(
+                    {
+                        conversation_id:conversation_id,
+                        data:data,
+                        recieverID:recieverID
+                    }
+                )
+            };
+
+            try{
+                const response = await fetch("/createChat",reqOptions);
+                const data = await response.json();
+
+                //trigger useeffect to re-fetch data from server
+                setRefresh(!refresh);
+            }   
+            catch(err){
+                if(err) throw err;
+                console.log(err);
+            }
+        }
+    }
     
     //whenever page refreshes, fetch all the conversations
     useEffect(()=>{
@@ -48,6 +93,8 @@ const Messenger = (props)=>{
 
     //when a chat is clicked, fetch all the messeges related to it
     useEffect(()=>{
+        console.log("Fetch messege use effect triggered!!");
+
         const getMesseges = async ()=>{
             console.log("Current chat clicked:")
             console.log(currChat);
@@ -76,7 +123,7 @@ const Messenger = (props)=>{
         }
 
         getMesseges()
-    },[currChat])
+    },[currChat,refresh])
 
     useEffect(()=>{
         console.log("Messages set!");
@@ -105,7 +152,7 @@ const Messenger = (props)=>{
                         //only if a chat is selected, display messages of the chat. Else display no messages.
                         !currChat?<span className="no-conversation">Open a conversation to begin chatting!</span>:messeges?
                         messeges.map((m,i)=>{
-                            return <div><Messege is_my_msg={m.authorID.toString() === my_id.toString()} data={m.data} key={i} timestamp={'1 hour ago'}/></div>
+                            return <div><Messege is_my_msg={m.authorID.toString() === my_id.toString()} data={m.data} key={i} timestamp={m.created_at}/></div>
                         })
                         :null
                     }
@@ -117,9 +164,12 @@ const Messenger = (props)=>{
                             <textarea 
                             placeholder="whats on your mind?"
                             className="messageInput"
-                            ></textarea>
+                            value = {sendMessege}
+                            onChange = {handleTextareaChange}
+                            />
 
                             <button
+                                onClick={postMessege}
                                 className="sendMessage"
                             >Send</button>
                         </>:<></>

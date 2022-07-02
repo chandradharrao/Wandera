@@ -19,6 +19,7 @@ mongoose.Promise = global.Promise;
 
 //get all conversations involving the user as a memeber
 router.get("/conversations",loginAuth,async (req,res)=>{
+
     try{
         //find conversations where the members list has user as an entity
         const conversations = await Conversation.find({
@@ -70,9 +71,12 @@ router.post("/createconversation",loginAuth,async (req,res)=>{
 //create a new chat message under a conversation
 router.post("/createChat",loginAuth,async (req,res)=>{
     try{
-        const newChatMsg = new Chat({
+        console.log("Recieved MSG");
+        console.log(req.body);
+
+        let newChatMsg = new Chat({
             conversation_id:req.body.conversation_id,
-            data:req.body.message,
+            data:req.body.data,
             authorID: new ObjectId(req.user._id),
             recieverID:new ObjectId(req.body.recieverID)
         });
@@ -89,11 +93,21 @@ router.post("/createChat",loginAuth,async (req,res)=>{
 //get all chat messages of a user and friend pair using their unique conversation_id
 router.post("/getMessages",loginAuth,async (req,res)=>{
     try{
-        const messages = await Chat.find({
+        const messeges = await Chat.find({
             conversation_id:new ObjectId(req.body.conversation_id)
         });
-        
-        return res.status(200).json({data:messages});
+
+        let data = messeges.map((m)=>{
+            return {
+                "created_at":ObjectId(m._id).getTimestamp(),
+                _id:m._id,
+                data:m.data,
+                authorID:m.authorID,
+                recieverID:m.recieverID,
+                conversation_id:m.conversation_id
+            }
+        })
+        return res.status(200).json({data:data});
     }
     catch(err){
         console.log(err);
