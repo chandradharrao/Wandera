@@ -43,6 +43,9 @@ const Messenger = (props)=>{
     //online users
     const [onlineFriends,setOnlineFriends] = useState(new Set());
 
+    //search bar text
+    const [searchData,setSearchData] = useState('')
+
     //handle change in the text area data
     const handleTextareaChange = (event)=>{
         setSendMessege(event.target.value);
@@ -51,6 +54,7 @@ const Messenger = (props)=>{
 
     //handle send button press
     const postMessege = async ()=>{
+        if(!currChat) return;
 
         const conversation_id = currChat.conversation_id;
         const data = sendMessege;
@@ -83,6 +87,25 @@ const Messenger = (props)=>{
             }
         }
     }
+
+    const handleSearchBar = (event)=>{
+        setSearchData(event.target.value);
+    }
+
+    useEffect(()=>{
+        console.log(searchData);
+        let stored_conv = JSON.parse(localStorage.getItem("conversations"));
+
+        if (stored_conv && conversations){
+            let filtered_convs = stored_conv.filter((c)=>{
+                if(!c) return false;
+
+                console.log(c.otherName.includes(searchData))
+                return c.otherName.includes(searchData)
+            })
+            setConversations(filtered_convs);
+        }
+    },[searchData])
 
 
     //whenever server pushes message to client, the socket object is updated which triggers this use-effect.
@@ -146,6 +169,8 @@ const Messenger = (props)=>{
             .then(({conversations})=>{
                 setConversations(conversations);
                 console.log("State set!");
+
+                localStorage.setItem("conversations",JSON.stringify(conversations));
             })
             .catch(err=>console.log(err));
     },[]); //loaded only once
@@ -242,13 +267,16 @@ const Messenger = (props)=>{
         <div className="messenger">
             <div className="chatMenu">
                 <div className="chatMenuWrapper">
-                    <input placeholder="Search for friends" className="chatMenuInput" />
-                    {console.log("Online friends recieved")}
-                    {console.log(onlineFriends)}
+                    <input placeholder="Search for Conversations" 
+                    value = {searchData}
+                    onChange={handleSearchBar}
+                    className="chatMenuInput" />
+                    {console.log("Conv")}
+                    {console.log(conversations)}
                     {
                         //returns an array of the result
                         conversations.map((c,i)=>{
-                            return <div onClick={()=>{console.log(c);setChat(c)}}><Conversation conversation={c} isOnline={onlineFriends.has(c.other)} key={i}/></div>
+                            return <div onClick={()=>{console.log("creating component");console.log(c);setChat(c)}}><Conversation conversation={c} isOnline={onlineFriends.has(c.other)} key={i}/></div>
                         })
                     }
                 </div>

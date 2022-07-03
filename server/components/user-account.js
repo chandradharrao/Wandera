@@ -30,18 +30,6 @@ router.get("/allusers",(req,res)=>{
     })
 })
 
-router.get("/name",async (req,res)=>{
-   try{
-    console.log("Searching for " + req.query.otherid);
-    const otherUser = await User.findById(new ObjectId(req.query.otherid));
-    const name = otherUser.first_name + " " + otherUser.last_name;
-    return res.status(200).json({name});
-   }
-   catch(err){
-    console.log(err);
-    return res.status(500).json({message:"internal server error"});
-   }
-})
 
 const createAccount = async (firstname,lastname,email,dob,username,password) => {   
     const user_by_email = await User.findOne({email});

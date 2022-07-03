@@ -2,37 +2,7 @@ import './Conversation.css';
 import React, { useEffect,useState } from 'react';
 
 const Conversation = ({conversation,isOnline})=>{
-    // const isOnline = false;
-    const [otherName,setOtherName] = useState('');
 
-    const getName = async (otherId)=>{
-        const res = await fetch("/name?otherid="+otherId);
-        const data = await res.json();
-        console.log(data.name);
-        return data.name;
-    }
-
-    useEffect(()=>{
-        console.log("Use effect of conv.js");
-        let other = conversation.other;
-        if(other){
-            getName(conversation.other.toString())
-            .then(name=>{
-                setOtherName(name);
-                console.log("Set name!");
-            })
-            .catch(err=>console.log(err));
-        }
-        else{
-            setOtherName("Me");
-        }
-
-        //clean callback called by useEffect
-        return ()=>{
-            setOtherName('')
-        }
-    },[])
-    
     return(
         <div className="conversation">
             <img 
@@ -41,8 +11,10 @@ const Conversation = ({conversation,isOnline})=>{
             ></img>
 
         <div className="conversationRight"></div>
-            <div className="conversationName">{otherName}</div>
-            <div className={isOnline||otherName=="Me"?"status online":"status offline"}>{isOnline||otherName=="Me"?"Online":"Offline"}</div>
+            <div className="conversationName">{conversation.otherName}</div>
+            {console.log("Conversations to load!!")}
+            {console.log(conversation)}
+            <div className={isOnline||conversation.otherName=="Me"?"status online":"status offline"}>{isOnline||conversation.otherName=="Me"?"Online":"Offline"}</div>
         </div>
     )
 };
