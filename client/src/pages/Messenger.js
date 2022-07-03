@@ -34,7 +34,7 @@ const Messenger = (props)=>{
     //user typed messege
     const [sendMessege,setSendMessege] = useState('');
 
-    //re-fetch the messgae of current chat fater sending a messege
+    //re-fetch the messege of current chat after sending a messege
     const [refresh,setRefresh] = useState(false);
 
     //dom element to scroll to
@@ -57,18 +57,21 @@ const Messenger = (props)=>{
         const conversation_id = currChat.conversation_id;
         const data = sendMessege;
         const recieverID = currChat.other;
-        
+        const post_data = {
+            conversation_id:conversation_id,
+            data:data,
+            recieverID:recieverID
+        };
+
         if(sendMessege!=null){
+            //send it to socket server for instant server push of the message to other client
+            socket.emit("postMessege",post_data);
+
+            //posting it to regular server for archiving in mongodb
             const reqOptions = {
                 method:'POST',
                 headers:{'Content-Type':'application/json','Authorization':"Bearer " + localStorage.getItem('jwt')},
-                body:JSON.stringify(
-                    {
-                        conversation_id:conversation_id,
-                        data:data,
-                        recieverID:recieverID
-                    }
-                )
+                body:JSON.stringify(post_data)
             };
 
             try{
@@ -86,7 +89,7 @@ const Messenger = (props)=>{
     }
 
 
-    //whenever server pushes message to client, the socket object is updated
+    //whenever server pushes message to client, the socket object is updated which triggers this use-effect
     useEffect(()=>{
         console.log("creating connection...")
         if(socket){
@@ -103,15 +106,16 @@ const Messenger = (props)=>{
                 console.log(JSON.stringify(online_friends));
                 setOnlineFriends(new Set(online_friends));
             })
-        }
 
-        //get the conversations everytime server pushes something to the socket
-        getConversations()
-            .then(({conversations})=>{
-                setConversations(conversations);
-                console.log("State set!");
+            socket.on("transportMessege",({data,authorID})=>{
+                console.log("Recieved: " + data + " " + authorID);
+
+                if(messeges)
+                    setMesseges([...messeges,{"created_at":(new Date()).toString(),data,authorID}])
+                else
+                    setMesseges([{"created_at":(new Date()).toString(),data,authorID}])
             })
-            .catch(err=>console.log(err));
+        }
 
     },[socket])
     
@@ -122,6 +126,14 @@ const Messenger = (props)=>{
         const conn = io("ws://localhost:8900");
         setSocket(conn);
         console.log(conn);
+
+        //get all the conversations 
+        getConversations()
+            .then(({conversations})=>{
+                setConversations(conversations);
+                console.log("State set!");
+            })
+            .catch(err=>console.log(err));
     },[])
 
     useEffect(()=>{

@@ -56,5 +56,16 @@ io.on("connection",(client_sock)=>{
 			io.to(sid).emit("returnOnlineFriends",{online_friends:Array.from(userid_sockid.keys())})
 		});
 	})
+
+	//recieve messege from client
+	client_sock.on("postMessege",({data,recieverID})=>{
+		console.log("Posted message : "+data +" "+recieverID);
+
+		//get socket id of reciever
+		const rsid = userid_sockid.get(recieverID.toString());
+		console.log("Rsid "+rsid );
+
+		io.to(rsid).emit("transportMessege",{data,authorID:sockid_userid.get(client_sock.id)})
+	})
 });
 

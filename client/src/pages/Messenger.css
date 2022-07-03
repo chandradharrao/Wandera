@@ -38,6 +38,10 @@
     color: aliceblue;
 }
 
+.sendMessage:hover{
+    cursor: pointer;
+}
+
 .chatBoxWrapper{
     overflow-y: scroll;
 }
