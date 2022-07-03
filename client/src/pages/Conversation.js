@@ -1,8 +1,8 @@
 import './Conversation.css';
 import React, { useEffect,useState } from 'react';
 
-const Conversation = ({conversation})=>{
-    const isOnline = false;
+const Conversation = ({conversation,isOnline})=>{
+    // const isOnline = false;
     const [otherName,setOtherName] = useState('');
 
     const getName = async (otherId)=>{
@@ -13,7 +13,7 @@ const Conversation = ({conversation})=>{
     }
 
     useEffect(()=>{
-        console.log("USe effect of conv.js");
+        console.log("Use effect of conv.js");
         let other = conversation.other;
         if(other){
             getName(conversation.other.toString())

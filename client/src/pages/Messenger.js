@@ -2,17 +2,12 @@ import "./Messenger.css";
 import Conversation from "./Conversation";
 import React, { useEffect, useState, useRef } from 'react';
 import Messege from "./Messege";
+import {io} from "socket.io-client";
 
 const getConversations = async ()=>{
     try{
-        const response = await fetch(
-            "/conversations",
-            {
-                headers:{
-                    "Authorization":"Bearer "+localStorage.getItem("jwt")
-                }
-            }
-            );
+        const response = await fetch("/conversations",{headers:{"Authorization":"Bearer "+localStorage.getItem("jwt")}});
+
         const convsersationFriends = await response.json();
         console.log(convsersationFriends);
         return convsersationFriends;
@@ -44,6 +39,12 @@ const Messenger = (props)=>{
 
     //dom element to scroll to
     const scrollTo = useRef();
+
+    //client socket
+    const [socket,setSocket] = useState(null); 
+
+    //online users
+    const [onlineFriends,setOnlineFriends] = useState([]);
 
     //handle change in the text area data
     const handleTextareaChange = (event)=>{
@@ -83,16 +84,57 @@ const Messenger = (props)=>{
             }
         }
     }
-    
-    //whenever page refreshes, fetch all the conversations
+
+
+    //whenever server pushes message to client, the socket object is updated
     useEffect(()=>{
+        console.log("creating connection...")
+        if(socket){
+            console.log("Connection created with sock server!");
+
+            socket.emit("addUser",my_id)
+
+            socket.on("onboardingEvent",(msg)=>{
+                console.log(msg);
+            })
+
+            socket.on("returnOnlineFriends",({online_friends})=>{
+                console.log("IO recieved friends:");
+                console.log(JSON.stringify(online_friends));
+                setOnlineFriends(online_friends);
+            })
+        }
+
+        //get the conversations everytime server pushes something to the socket
         getConversations()
             .then(({conversations})=>{
                 setConversations(conversations);
                 console.log("State set!");
             })
             .catch(err=>console.log(err));
+
+    },[socket])
+    
+    //whenever page refreshes, fetch all the conversations
+    useEffect(()=>{
+
+        //create a connection to the server
+        const conn = io("ws://localhost:8900");
+        setSocket(conn);
+        console.log(conn);
     },[])
+
+    useEffect(()=>{
+        if(socket){
+            console.log("All conversations....");
+            console.log(conversations);
+            //get a boolean mapping of <friend:isOnline>
+            socket.emit("getOnlineFriends",{all_friends:conversations.map((c)=>{
+                return c.other?c.other:null;
+            })})
+        }
+
+    },[conversations])
 
     //when a chat is clicked, fetch all the messeges related to it
     useEffect(()=>{
@@ -150,10 +192,12 @@ const Messenger = (props)=>{
             <div className="chatMenu">
                 <div className="chatMenuWrapper">
                     <input placeholder="Search for friends" className="chatMenuInput" />
+                    {console.log("Online friends recieved")}
+                    {console.log(onlineFriends)}
                     {
                         //returns an array of the result
                         conversations.map((c,i)=>{
-                            return <div onClick={()=>{console.log(c);setChat(c)}}><Conversation conversation={c} key={i}/></div>
+                            return <div onClick={()=>{console.log(c);setChat(c)}}><Conversation conversation={c} isOnline={onlineFriends[i]} key={i}/></div>
                         })
                     }
                 </div>
