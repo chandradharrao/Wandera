@@ -42,7 +42,7 @@ const Conversation = ({conversation,isOnline})=>{
 
         <div className="conversationRight"></div>
             <div className="conversationName">{otherName}</div>
-            <div className={isOnline?"status online":"status offline"}>{isOnline?"Online":"Offline"}</div>
+            <div className={isOnline||otherName=="Me"?"status online":"status offline"}>{isOnline||otherName=="Me"?"Online":"Offline"}</div>
         </div>
     )
 };

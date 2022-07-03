@@ -44,7 +44,7 @@ const Messenger = (props)=>{
     const [socket,setSocket] = useState(null); 
 
     //online users
-    const [onlineFriends,setOnlineFriends] = useState([]);
+    const [onlineFriends,setOnlineFriends] = useState(new Set());
 
     //handle change in the text area data
     const handleTextareaChange = (event)=>{
@@ -101,7 +101,7 @@ const Messenger = (props)=>{
             socket.on("returnOnlineFriends",({online_friends})=>{
                 console.log("IO recieved friends:");
                 console.log(JSON.stringify(online_friends));
-                setOnlineFriends(online_friends);
+                setOnlineFriends(new Set(online_friends));
             })
         }
 
@@ -128,10 +128,9 @@ const Messenger = (props)=>{
         if(socket){
             console.log("All conversations....");
             console.log(conversations);
-            //get a boolean mapping of <friend:isOnline>
-            socket.emit("getOnlineFriends",{all_friends:conversations.map((c)=>{
-                return c.other?c.other:null;
-            })})
+
+            //get all online users
+            socket.emit("getOnlineFriends")
         }
 
     },[conversations])
@@ -197,7 +196,7 @@ const Messenger = (props)=>{
                     {
                         //returns an array of the result
                         conversations.map((c,i)=>{
-                            return <div onClick={()=>{console.log(c);setChat(c)}}><Conversation conversation={c} isOnline={onlineFriends[i]} key={i}/></div>
+                            return <div onClick={()=>{console.log(c);setChat(c)}}><Conversation conversation={c} isOnline={onlineFriends.has(c.other)} key={i}/></div>
                         })
                     }
                 </div>
