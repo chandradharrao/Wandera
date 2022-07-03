@@ -66,6 +66,7 @@ io.on("connection",(client_sock)=>{
 		console.log("Rsid "+rsid );
 
 		io.to(rsid).emit("transportMessege",{data,authorID:sockid_userid.get(client_sock.id)})
+		io.to(client_sock.id).emit("transportMessege",{data,authorID:sockid_userid.get(client_sock.id)})
 	})
 });
 

@@ -34,9 +34,6 @@ const Messenger = (props)=>{
     //user typed messege
     const [sendMessege,setSendMessege] = useState('');
 
-    //re-fetch the messege of current chat after sending a messege
-    const [refresh,setRefresh] = useState(false);
-
     //dom element to scroll to
     const scrollTo = useRef();
 
@@ -54,6 +51,7 @@ const Messenger = (props)=>{
 
     //handle send button press
     const postMessege = async ()=>{
+
         const conversation_id = currChat.conversation_id;
         const data = sendMessege;
         const recieverID = currChat.other;
@@ -75,11 +73,9 @@ const Messenger = (props)=>{
             };
 
             try{
-                const response = await fetch("/createChat",reqOptions);
-                const data = await response.json();
-
-                //trigger useeffect to re-fetch data from server
-                setRefresh(!refresh);
+                const _ = await fetch("/createChat",reqOptions);
+                //clear the tetx area
+                setSendMessege('');
             }   
             catch(err){
                 if(err) throw err;
@@ -89,7 +85,8 @@ const Messenger = (props)=>{
     }
 
 
-    //whenever server pushes message to client, the socket object is updated which triggers this use-effect
+    //whenever server pushes message to client, the socket object is updated which triggers this use-effect.
+    //Also trigger this only when we have a value for currChat state
     useEffect(()=>{
         console.log("creating connection...")
         if(socket){
@@ -109,15 +106,32 @@ const Messenger = (props)=>{
 
             socket.on("transportMessege",({data,authorID})=>{
                 console.log("Recieved: " + data + " " + authorID);
+                console.log("Current chat "+JSON.stringify(currChat))
 
-                if(messeges)
-                    setMesseges([...messeges,{"created_at":(new Date()).toString(),data,authorID}])
-                else
-                    setMesseges([{"created_at":(new Date()).toString(),data,authorID}])
+                if(currChat){
+                    const {conversation_id} = currChat;
+                    const stored_msgs = JSON.parse(localStorage.getItem(conversation_id));
+                    console.log("Messeges in local store: ");
+                    for(let i = 0;i<stored_msgs.length;i++){
+                        console.log(JSON.stringify(stored_msgs[i]))
+                    }
+                    console.log();
+                    if(stored_msgs){
+                        const new_msgs = [...stored_msgs,{"created_at":(new Date()).toString(),data,authorID}]
+                        setMesseges(new_msgs)
+                        localStorage.setItem(conversation_id,JSON.stringify(new_msgs));
+                    }
+                    else
+                        console.log("currChat is null??")
+                }
             })
         }
 
-    },[socket])
+    },[socket,currChat])
+
+    useEffect(()=>{
+        console.log("CurrChat changed??")
+    },[currChat])
     
     //whenever page refreshes, fetch all the conversations
     useEffect(()=>{
@@ -134,7 +148,7 @@ const Messenger = (props)=>{
                 console.log("State set!");
             })
             .catch(err=>console.log(err));
-    },[])
+    },[]); //loaded only once
 
     useEffect(()=>{
         if(socket){
@@ -169,6 +183,9 @@ const Messenger = (props)=>{
                     const data = await response.json();
                     console.log("The messeges retrived ");
                     console.log(data);
+
+                    //localstore these messeges
+                    localStorage.setItem(conversation_id,JSON.stringify(data.data))
                     setMesseges(data.data);
                 }
                 catch(err){
@@ -185,7 +202,7 @@ const Messenger = (props)=>{
             scrollTo.current.scrollIntoView({behaviour:"smooth"});
         }
 
-    },[currChat,refresh])
+    },[currChat])
 
     useEffect(()=>{
         console.log("Messages set!");
@@ -197,6 +214,29 @@ const Messenger = (props)=>{
         }
         
     },[messeges])
+
+
+    //add this event listener only after we have currChat and sendMesseges with us
+    useEffect(()=>{
+        //allow sending of messege when enter is pressed by adding event listener to "Enter" when component is mounted
+        const enter_evnt_listener = (event)=>{
+            if(event.code=="Enter" || event.code=="NumpadEnter"){
+                event.preventDefault();
+                postMessege().then(()=>{
+                    console.log("Successfull!");
+                }).catch(err=>{
+                    if(err) throw err;
+                    console.log(err);
+                })
+            }
+        }
+        document.addEventListener("keydown",enter_evnt_listener);
+
+        //clean up
+        return ()=>{
+            document.removeEventListener("keydown",enter_evnt_listener);
+        }
+    },[currChat,sendMessege])
 
     return(
         <div className="messenger">
@@ -222,7 +262,8 @@ const Messenger = (props)=>{
                         /*only if a chat is selected, display messages of the chat. Else display no messages.*/
                         !currChat?<span className="no-conversation">Open a conversation to begin chatting!</span>:messeges?
                         messeges.map((m,i)=>{
-                            return <div ref={scrollTo}><Messege is_my_msg={m.authorID.toString() === my_id.toString()} data={m.data} key={i} timestamp={m.created_at}/></div>
+                            console.log(JSON.stringify(m));
+                            return m?<div ref={scrollTo}><Messege is_my_msg={m.authorID.toString() === my_id.toString()} data={m.data} key={i} timestamp={m.created_at}/></div>:<div></div>
                         })
                         :null
                     }
