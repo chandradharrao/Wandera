@@ -13,8 +13,16 @@
     color: #ccc;
 }
 
+.allFriendsList{
+    flex:2.5;
+    border-left: 2px solid #ccc;
+}
+.friend{
+    padding: 5%;
+}
+
 .chatBox{
-    flex: 7.5;
+    flex: 5;
     margin-left: 2%;
 }
 .chatBoxBottom{

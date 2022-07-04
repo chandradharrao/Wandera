@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
 const CONSTS = require('./constants');
 const login_authorize = require('../middleware/login-authorize');
+const ObjectId = require('mongodb').ObjectId;
 
 // Importing the user model as User
 const User = require('../models/user');
@@ -21,151 +22,123 @@ mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
 // Since mongoose promise is depricated, override it with NodeJS promises
 mongoose.Promise = global.Promise;
 
-router.put('/follow', login_authorize, (req, res) => {
-    var Celebrity;
-    var Me;
-    var toFollowID = req.body.toFollowID;
-    
-    var theOrdinaryMe = {
-        follow_unfollowID: req.user._id,
-        follow_unfollowUsername: req.user.username
-    };
-
-    Promise.all([User.find({username:req.body.toFollowuname}).exec()]).then(([foundUser])=>{
-        console.log("the type of found user is " + typeof foundUser);
-        var num_followers = 0;
-        if(!foundUser)
-            return res.status(422).json({error:"User not found"});
-        if(toFollowID === undefined){
-            console.log(`This is the user found on db ${foundUser[0]}`);
-            toFollowID = foundUser[0]._id;
-            //console.log(`The toFollowID is ${foundUser._id}`);
-            if((toFollowID).toString() === (req.user._id).toString()) {
-                console.log("You can't follow yourself");
-                return res.status(422).json({message:"You can't follow yourself :)"});
-            }
-            // Push to the followers array of the toUnFollowID user
-            User.findByIdAndUpdate(toFollowID, {
-                //$push:{followers:theOrdinaryMe}
-                $addToSet:{followers:theOrdinaryMe}
-            }, {new: true}, (err, result) => {
-                if(err) {
-                    console.log("Unable to push...");
-                    return res.status(404).json({error:err});
-                }
-                Celebrity = result;
-                num_followers = result.followers.length;
-                // Update the follwing array of the user who followed toUnFollowID
-                var theCelebrity = {
-                    follow_unfollowID:toFollowID,
-                    follow_unfollowUsername:Celebrity.username
-                };
-                User.findByIdAndUpdate(req.user._id, {
-                    $push: {following:theCelebrity}
-                }, {new: true}, (err, result) => {
-                    if(err) {
-                        return res.status(422).json({error:err});
-                    }
-                    Me = result;
-                    console.log(`${Celebrity.username} got followed by ${Me.username} successfully!`)
-                    return res.status(200).json({message: "Successfully Followed",num_followers:num_followers});
-                })
-            })
+//input: toFollow user_id
+/* 
+    ->Add the toFollowid into the users follwoing list
+    ->add the users_id to the followers list of the toFollowid user
+*/
+router.post('/follow', login_authorize, async (req, res) => {
+    try{
+        if(req.body.toFollowID.toString() === req.user._id.toString()){
+            return res.status(404).json({message:"cannot follow yourself"});
         }
-    }).catch(err=>{
+
+        //user who made the request
+        let user1 = await User.findOne({_id:ObjectId(req.user._id)});
+        console.log("User1 "+JSON.stringify(user1));
+
+        //user whom user1 wants to follow
+        let user2 = await User.findOne({_id:ObjectId(req.body.toFollowID)});
+        console.log("User2 "+JSON.stringify(user2));
+
+        //add user2 to user1's tollowing list
+        user1.following.push(req.body.toFollowID);
+        //add user1 to user2's followers
+        user2.followers.push(req.user._id);
+
+        //update user1 in db
+        const updated_user1 = await User.findByIdAndUpdate(req.user._id,user1);
+        const updated_user2 = await User.findByIdAndUpdate(user2._id,user2);
+
+        return res.status(200).json({message:"successfully followed "+user2.username});
+    }
+    catch(err){
+        if(err) throw err;
         console.log(err);
-        return res.status(422).json({error:err});
+
+        return res.status(400).json({message:"internal server error"});
+    }
+})
+
+//input: to unfollow userid
+//todo:
+//remove user2 from user1's followers list
+//remove user1 from user2's following list
+router.post('/unfollow', login_authorize, async (req, res) => {
+    try{
+        const toUnFollowID = req.body.toUnFollowID;
+        
+        let user1 = await User.findOne({_id:ObjectId(req.user._id)});
+        let user2 = await User.findOne({_id:ObjectId(toUnFollowID)});
+
+        const indx = user1.following.indexOf(toUnFollowID);
+        const doesExist = indx>=0;
+        if(doesExist){
+            user1.following.splice(indx,1);
+        }
+
+        const indx1 = user2.followers.indexOf(req.user._id);
+        const doesExist1 = indx1>=0;
+        if(doesExist1){
+            user2.followers.splice(indx1,1);
+        }
+
+        if(!doesExist){
+            return res.status(404).json({message:"operation failed since you dont follow the user",status:false});
+        }
+        return res.status(200).json({message:"successfully unfollowed",status:true});
+    }
+    catch(err){
+        console.log(err);
+
+        return res.status(500).json({message:"internal server error",status:false});
+    }
+})
+
+//return <username,_id> of all friends of the user
+router.get("/getFriends",login_authorize,async (req,res)=>{
+    const {followers,following} = await User.findById(new ObjectId(req.user._id));
+    const allFriends = [...followers,...following];
+    let friends = [];
+    let counter = 0
+    allFriends.forEach( async (f,indx,arr)=>{
+        const foundUser = await User.findById(ObjectId(f._id));
+        friends.push({
+            username:foundUser.username,
+            _id:foundUser._id
+        });
+        counter++;
+
+        //this logic is used to return after asynchronously populating the array
+        if(counter==arr.length){
+            return res.status(200).json({friends});
+        }
     })
 })
 
-router.put('/unfollow', login_authorize, (req, res) => {
-    var Celebrity;
-    var Me;
-    var toUnFollowID = req.body.toUnFollowID;
-    
-    var theOrdinaryMe = {
-        follow_unfollowID: req.user._id,
-        follow_unfollowUsername: req.user.username
-    };
-
-    Promise.all([User.find({username:req.body.toUnFollowuname}).exec()]).then(([foundUser])=>{
-        console.log("the type of found user is " + typeof foundUser);
-        var num_followers = 0;
-        if(!foundUser)
-            return res.status(422).json({error:"User not found"});
-        if(toUnFollowID === undefined){
-            console.log(`This is the user found on db ${foundUser[0]}`);
-            toUnFollowID = foundUser[0]._id;
-            //console.log(`The toFollowID is ${foundUser._id}`);
-            if((toUnFollowID).toString() === (req.user._id).toString()) {
-                console.log("You can't Unfollow yourself");
-                return res.status(422).json({message:"You can't unfollow yourself :)"});
-            }
-            // Pull the followers array of the to UnFollowID user
-            User.findByIdAndUpdate(toUnFollowID, {
-                $pull:{followers:theOrdinaryMe}
-            }, {new: true}, (err, result) => {
-                if(err) {
-                    console.log("Unable to pull...");
-                    return res.status(404).json({error:err});
-                }
-                Celebrity = result;
-                num_followers = result.followers.length;
-                // Update the follwing array of the user who followed toUnFollowID
-                var theCelebrity = {
-                    follow_unfollowID:toUnFollowID,
-                    follow_unfollowUsername:Celebrity.username
-                };
-                User.findByIdAndUpdate(req.user._id, {
-                    $pull: {following:theCelebrity}
-                }, {new: true}, (err, result) => {
-                    if(err) {
-                        return res.status(422).json({error:err});
-                    }
-                    Me = result;
-                    console.log(`${Celebrity} got unfollowed by ${Me} successfully!`)
-                    return res.status(200).json({message:"Successfully Unfollowed",num_followers:num_followers});
-                })
-            })
-        }
-    }).catch(err=>{
-        console.log(err);
-        return res.status(422).json({error:err});
-    })
-})
-
-router.get("/get-user-followers-details", login_authorize,(req, res) => {
-    var count = 0;
-    var isAlreadyFollowed = false;
+//input:
+//requesting user and requested username
+//returns:
+//statistics regarding the followers of requested user
+//does the user already follow the user supplied in query parameter?
+router.get("/get-user-followers-details", login_authorize, async(req, res) => {
     console.log("Username " + req.query.username);
-    User.find({username:req.query.username}, (err, foundUser) => {
-        if(err) {
-           return res.json({error:err});
-        }
-        var followers = foundUser[0].followers;
-        console.log(followers)
-        var followers_usernames = [];
-        var unique_array = [];
-        for(var i = 0;i<followers.length;i++){
-            console.log(followers[i].follow_unfollowUsername)
-            followers_usernames.push(followers[i].follow_unfollowUsername);
-        }
-        console.log("the user's username is " + req.user.username);
-        const userUsername = req.user.username;
-        for(var j = 0;j<followers_usernames.length;j++){
-            if(unique_array.indexOf(followers_usernames[j]) === -1){
-                count++;
-                unique_array.push(followers_usernames[j]);
-            }
-            if(followers_usernames[j].toString() === userUsername.toString()){
-                isAlreadyFollowed = true;
-            }
-        }
+
+    try{
+        const user2 = await User.findOne({username:req.query.username});
+        let num_followers = user2.followers.length;
+        let isFollowed = user2.followers.includes(req.user._id);
+
         return res.status(200).json({
-            num_followers:count,
-            isFollowed:isAlreadyFollowed
+            num_followers,
+            isFollowed
         })
-    })
+    }
+    catch(err){
+        console.log(err);
+
+        return res.status(500).json({messege:"internal server error"});
+    }
 });
 
 

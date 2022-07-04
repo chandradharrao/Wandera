@@ -85,17 +85,26 @@ router.get("/conversations",loginAuth,async (req,res)=>{
 //create a new conversation(upsert)
 router.post("/createconversation",loginAuth,async (req,res)=>{
     try{
+        //check if a conversation involving the requested memebrs already exists
+        let foundConv = Conversation.find({$or:[
+            {members:[req.user._id,req.body.user2_id]},
+            {members:[req.body.user2_id,req.user._id]}
+        ]})
+        if(foundConv){
+            return res.status(409).json({status:false,message:"Conversation already exists, use that"});
+        }
+        
         let newConv = new Conversation({
             members:[req.user._id,req.body.user2_id]
         });
     
-        const savedConv = await newConv.save();
+        const _ = await newConv.save();
     
-        return res.status(200).json({message:"New Conversation created successfully!"});
+        return res.status(200).json({status:true,messege:"New Conversation created successfully!"});
     }
     catch(err){
         console.log(err);
-        return res.status(500).json({message:"Internal server error"});
+        return res.status(500).json({status:false,messege:"Internal server error"});
     }
 })
 

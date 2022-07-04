@@ -44,7 +44,10 @@ const Messenger = (props)=>{
     const [onlineFriends,setOnlineFriends] = useState(new Set());
 
     //search bar text
-    const [searchData,setSearchData] = useState('')
+    const [searchData,setSearchData] = useState('');
+
+    //all friends list
+    const [allFriends,setAllFriends] = useState([]);
 
     //handle change in the text area data
     const handleTextareaChange = (event)=>{
@@ -173,6 +176,15 @@ const Messenger = (props)=>{
                 localStorage.setItem("conversations",JSON.stringify(conversations));
             })
             .catch(err=>console.log(err));
+
+        //get all friends
+        const getReqOpt = {headers:{"Authorization":"Bearer "+localStorage.getItem('jwt')}}
+        fetch("/getFriends",getReqOpt).
+        then(response=>response.json())
+        .then(({friends})=>{
+            console.log("Friends " + JSON.stringify(friends));
+            setAllFriends(friends);
+        })
     },[]); //loaded only once
 
     useEffect(()=>{
@@ -263,6 +275,44 @@ const Messenger = (props)=>{
         }
     },[currChat,sendMessege])
 
+
+    const createConversation = (e)=>{
+        const to_id = e.target.id;
+        console.log("Creating conversation with " + to_id);
+
+        //create a conversation
+        const postOpt = {
+            method:"POST",
+            headers:{
+                'Content-Type':'application/json',
+                "Authorization":'Bearer '+localStorage.getItem('jwt')
+            },
+            body:JSON.stringify({user2_id:to_id})
+        }
+
+        fetch("/createConversation",postOpt)
+        .then(response=>response.json())
+        .then(({status,messege})=>{
+            console.log(messege)
+
+            //re-fetch the conversations from server and set the state
+            if(status){
+                getConversations().then(()=>{
+                    getConversations()
+                    .then(({conversations})=>{
+                        // setConversations(conversations);
+                        console.log("State set!");
+
+                        localStorage.setItem("conversations",JSON.stringify(conversations));
+                        setConversations(conversations);
+                    })
+                    .catch(err=>console.log(err));
+                })
+            }
+        })
+        .catch(err=>{if(err) throw err; console.log(err)});
+    }
+
     return(
         <div className="messenger">
             <div className="chatMenu">
@@ -312,6 +362,15 @@ const Messenger = (props)=>{
                                 className="sendMessage"
                             >Send</button>
                         </>:<></>
+                    }
+                </div>
+            </div>
+            <div className="allFriendsList">
+                <div className="allFriendsListWrapper">
+                    {
+                        allFriends?allFriends.map((f,i)=>{
+                            return <div className="friend" onClick={(e)=>{return createConversation(e)}} key={i} id={f._id}> {f.username} </div>
+                        }):null
                     }
                 </div>
             </div>
