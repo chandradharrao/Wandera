@@ -8,6 +8,7 @@ const CONSTS = require('./constants');
 // Importing the user model as User
 const Post = require('../models/post');
 const User = require('../models/user');
+const Comment = require("../models/comments");
 
 // Connect to mongoose
 mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
@@ -62,31 +63,27 @@ router.get('/viewallposts', (req, res) => {
     })
 });
 
-// Get posts of users I'm following
-router.get("/viewmyfeed", login_authorize, (req, res) => {
+// output: Get posts of users I'm following
+//input: userID of logged in user
+router.get("/viewmyfeed", login_authorize, async(req, res) => {
     /* Out of all the posts, find those posts that are 
     posted by users presents in the following array of the user logged in */
-    Post.find({
-        postedByUName: {$in:req.user.following.follow_unfollowUsername}
-    })
-
-    /* Similar to "if 3 in [1,2,3] of python" -> 
-    $in matches postedBy to those fields present 
-    in req.users.following, this can be done with
-    the help of a for loop too. */
-    
-    .then((docs) => {
-        res.status(200).json({posts:docs});
-    })
-    .catch((err) => {
-        res.status(404).json({error: "Not able to fetch all posts"});
-    })
+   try{
+        const {following} = await User.findById(req.user._id);
+        const posts = await Post.find({
+            postedById: {$in:following}
+        });
+        const isLiked = posts.likedBy.includes(req.user._id);
+        return res.status(200).json({posts,isLiked});
+   }
+   catch(err){
+        console.log(err);
+        return res.status(404).json({error:"Not able to fetch all posts"})
+   }
 })
 
 router.get('/viewmyposts', login_authorize, (req, res) => {
-    Post.find({
-        postedById:req.user._id
-    })
+    Post.findById(req.user._id)
     .then((data) => {
         res.status(200).json({myPost:data})
     })
@@ -96,110 +93,91 @@ router.get('/viewmyposts', login_authorize, (req, res) => {
     })
 })
 
-router.get('/viewpostsof/:username', login_authorize, (req, res) => {
-    Post.find({
-        postedByUName: req.params.username
-    })
-    .then((data) => {
+router.get('/viewpostsof/:username', login_authorize, async (req, res) => {
+    try{
+        const user = await User.find({username:req.params.username});
+        const posts = await Post.find({
+            postedById:user._id
+        });
         console.log(`Posts found! All posts of this user, ${req.params.username}: \n ${data}`);
-        res.status(200).json({allPosts: data})
-    })
-    .catch((err) => {
+        return res.status(200).json({allPosts: data});
+    }
+    catch(err){
         console.log(`Error in view-posts-of router: {err}`);
         res.status(422).json({error:"Not able to fetch the user's posts."});
-    })
+    }
 })
 
-//havent tested since it will be a bit irritating to test using postman,lets test it after donf front end
-router.put('/like', login_authorize, (req, res) => {//we use put for 'updating' the likes array
+//PUT method for updating the array of likerIDs
+router.put('/like', login_authorize, (req, res) => {
     console.log(`Liked by ${req.user._id}`);
     Post.findById(req.body.post_id, (err, doc) => {
         if (err) {
             return res.status(404).json({error:err});
         }
-        var isAlreadyLiked = false;
-        for(var i = 0; i < doc.likedBy.length; i++) {
-            console.log(doc.likedBy[i].likerName);
-            if(doc.likedBy[i].likerName === req.user.username){
-                console.log("User already Liked");
-                isAlreadyLiked = true;
+        //check if post already liked
+        let isAlreadyLiked = doc.likedBy.includes(req.user._id);
+        if(isAlreadyLiked) return res.json({operationFailed:true,result:null,isLiked:true});
+
+        //like the post
+        Post.findByIdAndUpdate(req.body.post_id, {
+            $push : {likedBy:req.user._id} //use set operator($) to push likerID
+        }, {
+            new: true //return the modified record
+        })
+        .exec((err, result) => {//execute the query
+            if (err) {
+                return res.status(422).json({error:err});
             }
-        }
-        newLike = {
-            likerID:req.user._id,
-            likerName:req.user.username
-        }
-        if(!isAlreadyLiked){
-            Post.findByIdAndUpdate(req.body.post_id, {
-                $push : {likerID:req.user.id, likedBy:newLike} //we will use the set operator to modify the likes array by pushing the current user who liked the post
-            }, {
-                new: true //return the modified record
-            })
-            .exec((err, result) => {//execute the query
-                if (err) {
-                    return res.status(422).json({error:err});
-                }
-                return res.status(200).json({result:result});
-            });
-        } else {
-            return res.json({message: "Already liked!"});
-        }
+            return res.status(200).json({result:result,operationFailed:false,isLiked:true});
+        });
     });
 })
 
-router.put('/unlike',login_authorize,(req,res)=>{//we use put for 'updating' the likes array
-    console.log(`We wanna remove the liker ${req.user._id} from this post ${req.body.post_id}`);
+router.put('/unlike',login_authorize,(req,res)=>{
+    console.log(`remove the liker ${req.user._id} from this post ${req.body.post_id}`);
     Post.findByIdAndUpdate(req.body.post_id, {
-        $pull : {likedBy: {likerName:req.user.username}} //we will use the set operator to modify the likes array by pulling the current user who liked the post
-    },{
-        new:true //return the modified record
-    }).exec((err, result) => {//execute te query
+        $pull : {likedBy: req.user._id}
+    },{new:true})
+    .exec((err, result) => {
         if(err){
-            return res.status(422).json({error: err});
+            return res.status(422).json({result:null,error: err,removed:false});
         }
-        return res.status(200).json({result: result});
+        return res.status(200).json({result: result,removed:true});
     })
 })
 
-router.put('/comment', login_authorize, (req, res)=>{//we use put for 'updating' the likes array
 
-    const newComment = {
-        content: req.body.comment,//the body of the text from the front end
-        authorID: req.user._id,
-        authorName: req.user.username
+router.put('/comment', login_authorize, async (req, res)=>{
+    try{  
+        const uPost = await Post.findByIdAndUpdate(req.body.post_id,{$push:{comments:{content: req.body.comment,
+            authorID: req.user._id,authorName:req.user.username}}});
+        return res.status(200).json({result:uPost});
     }
-    console.log('User: ', req.user);
-    Post.findByIdAndUpdate(req.body.post_id, {//find the particular post and chage its comments field
-        $push : {comments:newComment}
-    }, {
-        new:true 
-    })
-    .exec((err, result) => {
-        if(err) {
-            return res.status(422).json({error:err});
-        }
-        return res.status(200).json({result:result});
-    })
+    catch(err){
+        console.log(err);
+        return res.status(422).json({error:err});
+    }
 })
 
 router.delete('/deletepost', login_authorize, (req, res) => {
     console.log(`Request: ${req.body.post_id}`);
-    Post.findOne({_id:req.body.post_id})
+    Post.findOne({_id:req.body.post_id,postedById:req.user._id})
     .exec((err, thepost) => {   //pass the id of the post to be deleted through the front end
         if(err || !thepost) {
             console.log(`Error in deleting 1: ${err}`);
             console.log(`The post instead? : ${thepost}`)
             return res.status(422).json({error:err});
         }
-        if(thepost.postedById.toString() === req.user._id.toString() && thepost.postedByUName === req.user.username){//if the post is published by user itself then only we can delete
-            thepost.remove()
-            .then((result) => {
-                res.status(200).json({message:result});
-            }).catch((err) => {
-                console.log(`Error in deleting 2: ${err}`);
-                res.status(422).json({error: err});
-            })
-        }
+        
+        //if a post found, then must belong to the user. Hence delete it
+        thepost.remove()
+        .then((result) => {
+            res.status(200).json({message:result});
+        }).catch((err) => {
+            console.log(`Error in deleting 2: ${err}`);
+            res.status(422).json({error: err});
+        })
     })
 })
 

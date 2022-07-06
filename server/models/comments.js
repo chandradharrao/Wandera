@@ -1,3 +1,6 @@
+//this is just the schema. We are storing the comments in  a comments collection.
+//rather we are storing it in the user's Post collection iteself.
+
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema({
@@ -7,21 +10,13 @@ const commentSchema = new mongoose.Schema({
     },
     authorID:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Users",
+        ref:"WandererCollection",
         required:true
     },
-    likes:{
-        type:Number,
-        default:0,
-        required:false
+    authorName:{
+        type:String,
+        required:true
     }
-});
-
-//replies are also of type comments
-commentSchema.add({
-    replies:[
-        {type:commentSchema}
-    ]
 })
 
 module.exports = commentSchema;

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const CommentSchema = require('./comments');
+const CommentSchema = require("../models/comments");
 
 const PostSchema = new mongoose.Schema({
     title:{
@@ -21,14 +21,9 @@ const PostSchema = new mongoose.Schema({
         ref:"Users"
     },
     // An array that contains the users who liked the particular post
-    likedBy:[
-        {type:mongoose.Schema.Types.ObjectId,ref:"Users"}
-    ],
-    comments:[{type:CommentSchema}],
-    isDeleted:{
-        type:Boolean,
-        default:false
-    }
+    likedBy:[{type:mongoose.Schema.Types.ObjectId,ref:"Users"}],
+    // An array of CommentsSchema Objects
+    comments:[{type:CommentSchema}]
 })
 
 // "Posts" collection will follow PostSchema when storing the data

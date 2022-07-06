@@ -5,10 +5,6 @@ const likeSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Users",
         required:true
-    },
-    likerName:{
-        type:String,
-        required:true
     }
 })
 
