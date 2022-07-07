@@ -73,8 +73,7 @@ router.get("/viewmyfeed", login_authorize, async(req, res) => {
         const posts = await Post.find({
             postedById: {$in:following}
         });
-        const isLiked = posts.likedBy.includes(req.user._id);
-        return res.status(200).json({posts,isLiked});
+        return res.status(200).json({posts});
    }
    catch(err){
         console.log(err);
@@ -83,8 +82,9 @@ router.get("/viewmyfeed", login_authorize, async(req, res) => {
 })
 
 router.get('/viewmyposts', login_authorize, (req, res) => {
-    Post.findById(req.user._id)
+    Post.find({postedById:req.user._id})
     .then((data) => {
+        console.log("Posts found " + JSON.stringify(data));
         res.status(200).json({myPost:data})
     })
     .catch((err) => {

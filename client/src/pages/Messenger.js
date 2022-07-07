@@ -3,6 +3,7 @@ import Conversation from "./Conversation";
 import React, { useEffect, useState, useRef } from 'react';
 import Messege from "./Messege";
 import {io} from "socket.io-client";
+import {useHistory} from "react-router-dom";
 
 const getConversations = async ()=>{
     try{
@@ -94,6 +95,8 @@ const Messenger = (props)=>{
     const handleSearchBar = (event)=>{
         setSearchData(event.target.value);
     }
+
+    const history = useHistory();
 
     useEffect(()=>{
         console.log(searchData);
@@ -330,6 +333,11 @@ const Messenger = (props)=>{
                         })
                     }
                 </div>
+
+                <div className="chat-navbar">
+                    <ul><a href="/main" className="exit"> {"Exit out of Chat?"}</a></ul>
+                </div>
+
             </div>
 
             <div className="chatBox">
@@ -367,9 +375,15 @@ const Messenger = (props)=>{
             </div>
             <div className="allFriendsList">
                 <div className="allFriendsListWrapper">
+                    <div className="friendslist-title">
+                        Create a new conversation
+                    </div>
                     {
                         allFriends?allFriends.map((f,i)=>{
-                            return <div className="friend" onClick={(e)=>{return createConversation(e)}} key={i} id={f._id}> {f.username} </div>
+                            return <div className="friend-add-pair">
+                                <button className="add">+</button>
+                                <div className="friend" onClick={(e)=>{return createConversation(e)}} key={i} id={f._id}> {f.username} </div>
+                            </div>
                         }):null
                     }
                 </div>

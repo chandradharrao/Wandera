@@ -3,6 +3,23 @@
     display: flex;
 }
 
+.exit{
+    font-size: large;
+    color: red;
+    font-weight: bolder;
+    text-decoration: none;
+}
+.exit:hover{
+    border-bottom: 2px solid red;
+}
+.chat-navbar{
+    transition: 0.2s;
+    padding: 0%;
+}
+.chat-navbar:hover{
+    transform: scale(1.2);
+}
+
 .chatMenu{
     flex:2.5;
     border-right: 2px solid #ccc;
@@ -17,8 +34,37 @@
     flex:2.5;
     border-left: 2px solid #ccc;
 }
-.friend{
-    padding: 5%;
+.friend-add-pair:hover{
+    cursor: pointer;
+    transform: scale(1.4); /*zoom in 120%*/
+}
+.add{
+    background-color: azure;
+    color: aqua;
+    font-size: large;
+    font-weight: bolder;
+    border-width:0ch;
+    margin-right: 20%;
+}
+.add:hover{
+    cursor: pointer;
+}
+.friend-add-pair{
+    display: flex;
+    padding-left: 15%;
+    padding-bottom: 10%;
+    transition: transform .2s; /*animation */
+}
+.friendslist-title{
+    text-align: center;
+    font-size: x-large;
+    padding-bottom: 5%;
+    padding-top: 5%;
+    border-bottom:3px solid #ccc;
+    margin-bottom: 15%;
+}
+.friend:hover{
+    border-bottom: 5px solid rgb(196, 235, 162);
 }
 
 .chatBox{

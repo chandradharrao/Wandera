@@ -11,7 +11,7 @@ const NavbarMain = () => {
                 <ul className="nav-links">
                     <li><a href = '/search'>Find Wanderers</a></li>
                     <li><a href="/main">Explore</a></li>
-                    <li><a href="/forum">Discuss</a></li>
+                    <li><a href="/chat">Chat</a></li>
                     <li><a href="/login">Login</a></li>
                     <li><a href='/sign-up'><button className="standout-button">SIGN UP</button></a></li>
                 </ul>

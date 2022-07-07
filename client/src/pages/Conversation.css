@@ -3,6 +3,7 @@
     align-items: center;
     padding:2%;
     margin-top: 5%;
+    transition: 0.2s;
 }
 
 .conversationImg{
@@ -19,8 +20,9 @@
 }
 
 .conversation:hover{
-    background-color: rgb(236, 241, 241);
+    border-bottom: 3px solid rgb(226, 229, 229);
     cursor: pointer;
+    transform: scale(1.5);
 }
 
 .conversationRight{

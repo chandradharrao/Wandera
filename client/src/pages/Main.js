@@ -15,7 +15,7 @@ const Main = () => {
     const my_id = JSON.parse(localStorage.getItem("user"))._id;
 
     useEffect(() => {
-        console.log("Viewing all posts!");
+        // console.log("Viewing all posts!");
         fetch('/viewallposts', {
             headers: {
                 "Authorization":"Bearer " + localStorage.getItem("jwt")
