@@ -7,11 +7,13 @@ const url = require('url');
 const User = require('../models/user');
 const Post = require('../models/post');
 const mongoose = require('mongoose');
-
-const CONSTS = require('./constants');
+require('dotenv').config();
 
 // Connect to mongoose
-mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
+mongoose.connect(process.env.DB_URL,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+ });
 
 // Since mongoose promise is deprecated, override it with NodeJS promises
 mongoose.Promise = global.Promise;

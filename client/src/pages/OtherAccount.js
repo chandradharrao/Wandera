@@ -67,7 +67,7 @@ const Account = () => {
 
     const followUser = ()=>{
         fetch('/follow',{
-            method:"PUT",
+            method:"POST",
             headers:{
                 "Content-Type":"Application/json",
                 "Authorization":"Bearer " + localStorage.getItem('jwt') 
@@ -86,7 +86,7 @@ const Account = () => {
 
     const unfollowUser = ()=>{
         fetch('/unfollow',{
-            method:"PUT",
+            method:"POST",
             headers:{
                 "Content-Type":"Application/json",
                 "Authorization":"Bearer " + localStorage.getItem('jwt') 
@@ -105,11 +105,14 @@ const Account = () => {
 
     const unfollow_follow = ()=>{
         if(isFollowed){
+            console.log("Unfollowing user...")
             unfollowUser();
         }
         else{
-            if(username !== JSON.parse(localStorage.getItem('user')).username)
+            if(username !== JSON.parse(localStorage.getItem('user')).username){
+                console.log("Follwoing user..");
                 followUser();
+            }
             else{
                 alert("You cannot follow yourself")
             }

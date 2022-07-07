@@ -22,9 +22,10 @@ const Main = () => {
             }
         })
         .then(res => res.json())
-        .then(data => {
+        .then(({posts})=> {
             // console.log(data)
-            setmainPosts(data.posts);
+            if(posts) setmainPosts(posts);
+
         })
      },[]);
 
@@ -50,7 +51,7 @@ const Main = () => {
                 if(!result) return;
 
                 let updated_posts = mainPosts.map(p=>{
-                    if(p._id.toString()==result._id.toString()){
+                    if(p._id==result._id){
                         return result;
                     }
                     return p;
@@ -79,9 +80,9 @@ const Main = () => {
                 // console.log(JSON.stringify(result))
 
                 let updatedPosts = mainPosts.map(p=>{
-                    if(p._id.toString() === result._id.toString()){
-                        console.log("Unliked Post "+JSON.stringify(result));
-                        console.log("Does user like? " + result.likedBy.includes(p._id))
+                    if(p._id === result._id){
+                        // console.log("Unliked Post "+JSON.stringify(result));
+                        // console.log("Does user like? " + result.likedBy.includes(p._id))
                         return result;
                     }
                     return p;
@@ -111,14 +112,14 @@ const Main = () => {
         .then(res => res.json())
         .then(({result}) => {
             console.log(result);
-            const newComment = mainPosts.map(item => {
-              if(item._id.toString() === result._id.toString()){
+            const updated_posts = mainPosts.map(item => {
+              if(item._id === result._id){
                   return result;
               } else {
                   return item;
               }
            })
-          setmainPosts(newComment)
+          setmainPosts(updated_posts)
         })
         .catch(err => {
             console.log(err)
@@ -132,7 +133,7 @@ const Main = () => {
             {
                 /* Make a copy of the mainPosts posts array, 
                 and reverse it to display newest posts first  */
-                mainPosts.slice(0).reverse().map(item => {
+                mainPosts.length>=1?[...mainPosts].sort().reverse().map((item) => {                   
                     return (
                         <div className="main-container" key={item._id}>
                             <div className="main-post-container">
@@ -183,7 +184,7 @@ const Main = () => {
                             </div>
                         </div>                    
                     );
-                })
+                }):<h3>No Posts...</h3>
             }
         </div>
     )

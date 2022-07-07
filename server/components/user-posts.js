@@ -3,15 +3,17 @@ const router = express.Router();
 const path = require("path");
 const mongoose = require('mongoose');
 const login_authorize = require('../middleware/login-authorize');
-const CONSTS = require('./constants');
-
+require('dotenv').config();
 // Importing the user model as User
 const Post = require('../models/post');
 const User = require('../models/user');
 const Comment = require("../models/comments");
 
 // Connect to mongoose
-mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
+mongoose.connect(process.env.DB_URL,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+ });
 
 // Since mongoose promise is deprecated, override it with a NodeJS promise
 mongoose.Promise = global.Promise;
@@ -56,10 +58,11 @@ router.post('/createpost', login_authorize, (req, res) => {
 router.get('/viewallposts', (req, res) => {
     Post.find()
     .then((docs) => {
+        console.log(docs);
         res.status(200).json({posts:docs});
     })
     .catch((err) => {
-        res.status(422).json({message:"Not able to fetch all posts"});
+        res.status(422).json({posts:[],message:"Not able to fetch all posts"});
     })
 });
 

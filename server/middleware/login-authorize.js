@@ -1,10 +1,13 @@
 const JWT = require('jsonwebtoken');
-const CONSTS = require('../components/constants');
+require('dotenv').config();
 const mongoose = require('mongoose');
 const User = require('../models/user');
 
 // Connect to mongoose
-mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
+mongoose.connect(process.env.DB_URL,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+ });
 
 // Since mongoose promise is deprecated, override it node js promise
 mongoose.Promise = global.Promise;
@@ -23,7 +26,7 @@ module.exports = async (req, res, next) => {
     try{
         const {_id} = await JWT.verify(
             assignedToken,
-            CONSTS.JWT_SECRET
+            process.env.JWT_SECRET
         );
 
         const foundUser = await User.findById(_id);

@@ -3,18 +3,21 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
+require('dotenv').config();
 
 /* Import the user model as User */
 const User = require("../models/user");
 const login_authorize = require('../middleware/login-authorize');
-const CONSTS = require('./constants');
 const { ObjectId } = require('mongodb');
 const { json } = require('body-parser');
 
 /* Connect to mongoose, override depracated
  Promise with the global one */
 
-mongoose.connect("mongodb://localhost:27017/usersdb", CONSTS.MONGO_OPTIONS);
+mongoose.connect(process.env.DB_URL,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+ });
 mongoose.Promise = global.Promise;
 
 /* Router for accessing protected resources like the main feed */
@@ -81,7 +84,7 @@ const signin = async (username,password)=>{
         const doesMatch = bcrypt.compareSync(password,foundUser.password);
         if(doesMatch){
             //hash the _id attribute since its guarenteed to be unique
-            const token = JWT.sign({_id:foundUser._id},CONSTS.JWT_SECRET);
+            const token = JWT.sign({_id:foundUser._id},process.env.JWT_SECRET);
             return {token,user:foundUser};
         }
         return {token:null,user:null,message:"username and/or password doesnt match!"};
