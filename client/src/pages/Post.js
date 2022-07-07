@@ -26,6 +26,8 @@ const Post = () => {
     useEffect(() => {
         // useEffect will kick in also when the url is mounted initially
         if(URL) {
+            // alert("URL " + URL);
+
             fetch('/createpost', {
                 method: "post",
                 headers: {

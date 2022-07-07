@@ -10,8 +10,8 @@ const PostSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    //list of photos in a post
-    photos: [ {type:String, required:true} ],
+    //A single photo
+    photo: {type:String, required:true},
     postedById: {
         /* Each user will be identified by object id,
         hence this field should be object id data type. */

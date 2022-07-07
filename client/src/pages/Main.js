@@ -12,8 +12,6 @@ const Main = () => {
 
     const {state, dispatch} = useContext(UserContext);
 
-    const [heart, setheart] = useState(new Map()); //<post_id,isLiked?>
-
     const my_id = JSON.parse(localStorage.getItem("user"))._id;
 
     useEffect(() => {
@@ -30,37 +28,12 @@ const Main = () => {
         })
      },[]);
 
-     useEffect(() => {
-         console.log("Changed img src..")
-     }, [heart])
+    const like_or_unlike = ({_id,likedBy,title}) => {
+        // console.log("Trying to like/unlike "+_id);
+        let isAlreadyLiked = likedBy.includes(my_id);
+        // console.log(`Post ${title} isAlreadyLiked? ${isAlreadyLiked}`);
 
-    const like_or_unlike = (post_id) => {
-        //if already liked,then we need to unlike
-        if(heart && heart.length>1 && heart.get(post_id)){
-            fetch('/unlike', {
-                method: "put",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + localStorage.getItem("jwt")
-                },
-                body: JSON.stringify({
-                    post_id: post_id
-                })
-            })
-            .then(res => res.json())
-            .then(({result,removed}) => {
-                if(removed){
-                    let tmp = new Set(heart);
-                    tmp.set(post_id,false); //unlike the post
-                    setheart(tmp);
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        }
-        else{
-            //else we need to like
+        if(!isAlreadyLiked){
             fetch('/like', {
                 method: "put",
                 headers: {
@@ -68,16 +41,53 @@ const Main = () => {
                     "Authorization": "Bearer " + localStorage.getItem("jwt")
                 },
                 body: JSON.stringify({
-                    post_id: post_id
+                    post_id: _id
                 })
             })
             .then(res => res.json())
-            .then(({result,operationFailed,isLiked}) => {
-                if(!operationFailed && isLiked){
-                    let tmp = new Map(heart);
-                    tmp.set(post_id,true); //post_id is liked
-                    setheart(tmp);
-                }
+            .then(({result}) => {
+                console.log("retrieved doc "+JSON.stringify(result))
+                if(!result) return;
+
+                let updated_posts = mainPosts.map(p=>{
+                    if(p._id.toString()==result._id.toString()){
+                        return result;
+                    }
+                    return p;
+                });
+                setmainPosts(updated_posts);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+        else{
+            fetch('/unlike', {
+                method: "put",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("jwt")
+                },
+                body: JSON.stringify({
+                    post_id: _id
+                })
+            })
+            .then(res => res.json())
+            .then(({result}) => {
+                // console.log("Unliking post ")
+                if(!result) return;
+                // console.log(JSON.stringify(result))
+
+                let updatedPosts = mainPosts.map(p=>{
+                    if(p._id.toString() === result._id.toString()){
+                        console.log("Unliked Post "+JSON.stringify(result));
+                        console.log("Does user like? " + result.likedBy.includes(p._id))
+                        return result;
+                    }
+                    return p;
+                });
+
+                setmainPosts(updatedPosts);
             })
             .catch(err => {
                 console.log(err);
@@ -86,6 +96,7 @@ const Main = () => {
     }
 
     const Comment = (comment, post_id)=>{
+        console.log("Sending comment: " + JSON.stringify(comment))
         fetch('/comment',{
             method: "put",
             headers: {
@@ -98,13 +109,13 @@ const Main = () => {
             })
         })
         .then(res => res.json())
-        .then(result => {
+        .then(({result}) => {
             console.log(result);
             const newComment = mainPosts.map(item => {
-              if(item._id === result._id){
-                  return result
+              if(item._id.toString() === result._id.toString()){
+                  return result;
               } else {
-                  return item
+                  return item;
               }
            })
           setmainPosts(newComment)
@@ -116,14 +127,12 @@ const Main = () => {
 
     return (
         <div className="main-page">
+            {console.log(mainPosts)}
             <Navbar />
             {
                 /* Make a copy of the mainPosts posts array, 
                 and reverse it to display newest posts first  */
                 mainPosts.slice(0).reverse().map(item => {
-                    console.log(item.likedBy)
-                    console.log(my_id)
-
                     return (
                         <div className="main-container" key={item._id}>
                             <div className="main-post-container">
@@ -141,7 +150,7 @@ const Main = () => {
                                 </div>
                                 <img src={item.photo} alt="User" className="user-main-image" />
                                 <div className="main-icons">
-                                    <img src={heart.length<1?(item.isLiked?like_icon:notliked_icon):(heart.get(item._id)?like_icon:notliked_icon)} alt="heart" onClick={() => like_or_unlike(item._id)}/>
+                                    <img src={item.likedBy.includes(my_id)?like_icon:notliked_icon} alt="heart" onClick={() => like_or_unlike(item)}/>
                                     <p>{item.likedBy.length} Likes</p>
                                 </div>
                                 <div className="main-post-content">

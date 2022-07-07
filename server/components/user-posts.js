@@ -117,7 +117,7 @@ router.put('/like', login_authorize, (req, res) => {
         }
         //check if post already liked
         let isAlreadyLiked = doc.likedBy.includes(req.user._id);
-        if(isAlreadyLiked) return res.json({operationFailed:true,result:null,isLiked:true});
+        if(isAlreadyLiked) return res.json({result:null});
 
         //like the post
         Post.findByIdAndUpdate(req.body.post_id, {
@@ -129,7 +129,7 @@ router.put('/like', login_authorize, (req, res) => {
             if (err) {
                 return res.status(422).json({error:err});
             }
-            return res.status(200).json({result:result,operationFailed:false,isLiked:true});
+            return res.status(200).json({result});
         });
     });
 })
@@ -141,17 +141,23 @@ router.put('/unlike',login_authorize,(req,res)=>{
     },{new:true})
     .exec((err, result) => {
         if(err){
-            return res.status(422).json({result:null,error: err,removed:false});
+            return res.status(422).json({result:null,error: err});
         }
-        return res.status(200).json({result: result,removed:true});
+        return res.status(200).json({result});
     })
 })
 
 
 router.put('/comment', login_authorize, async (req, res)=>{
     try{  
-        const uPost = await Post.findByIdAndUpdate(req.body.post_id,{$push:{comments:{content: req.body.comment,
-            authorID: req.user._id,authorName:req.user.username}}});
+        const uPost = await Post.findByIdAndUpdate(
+            req.body.post_id,
+            {$push:{comments:{content: req.body.comment,
+            authorID: req.user._id,authorName:req.user.username}}},
+            {new:true}
+        );
+        console.log("Updated Post " + JSON.stringify(uPost));
+
         return res.status(200).json({result:uPost});
     }
     catch(err){
