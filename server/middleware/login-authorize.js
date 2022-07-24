@@ -16,7 +16,7 @@ module.exports = async (req, res, next) => {
 
     // The req header's authorization would contain the jwt access token
     const authHeader = req.header('Authorization');
-    console.log(`The auth head is ${authHeader}`);
+    // console.log(`The auth head is ${authHeader}`);
     if(!authHeader){
         return res.status(401).json({error:"You must be logged in"})
     }

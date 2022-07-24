@@ -39,21 +39,36 @@ const getUserByName = async (userid)=>{
 
 //get all conversations involving the user as a memeber
 router.get("/conversations",loginAuth,async (req,res)=>{
+    // console.log("/conversations api called!");
 
     try{
         //find conversations where the members list has user as an entity
+        const all_test = await Conversation.find();
+        if(all_test.length)
+            console.log(`All conv ${all_test} in the db`);
+        else
+            console.log("Empty db :(")
+        
         const conversations = await Conversation.find({
             members: {
-                $in: new ObjectId(req.user._id)
+                $in: req.user._id.toString()
             }
         });
-        // console.log(conversations);
-        console.log(req.user._id)
+        if(conversations.length)
+            console.log(`Conversations retrived ${conversations} with members ${[req.user._id.toString()]}`);
+        else
+            console.log("No conversations yet :(");
+
+        // console.log(`Number of conversations retrieved ${conversations.length}`)
+        // console.log("----------------")
+        // console.log(req.user._id);
         let userid = req.user._id.toString()
 
         let modifiedConvs = [];
         let counter = 0;
         conversations.forEach((conv,indx,arr) => {
+            // console.log(`A conv ${conv}`);
+
             let other = conv.members.filter(member =>{ //return elements that pass the test
                 member = member.toString(); 
                 return member && member!==userid; 
@@ -70,39 +85,50 @@ router.get("/conversations",loginAuth,async (req,res)=>{
                 counter++;
 
                 if(counter === arr.length){
-                    console.log(modifiedConvs);
+                    // console.log(`Conversations: ${modifiedConvs}`);
                     return res.status(200).json({conversations:modifiedConvs});
                 }
             }).catch(err=>{
-                console.log(err);
+                // console.log(err);
                 if(err) throw err;
             })
         });
     }
     catch(err){
-        console.log(err);
+        // console.log(err);
         return res.status(500).json({message:"internal server error"});
     }
 })
 
 //create a new conversation(upsert)
-router.post("/createconversation",loginAuth,async (req,res)=>{
+router.post("/createConversation",loginAuth,async (req,res)=>{
     try{
+        console.log("Creating a conversation between "+req.user._id+" "+req.body.user2_id);
         //check if a conversation involving the requested memebrs already exists
         let foundConv = Conversation.find({$or:[
             {members:[req.user._id,req.body.user2_id]},
             {members:[req.body.user2_id,req.user._id]}
-        ]})
+        ]});
+
         if(foundConv){
-            return res.status(409).json({status:false,message:"Conversation already exists, use that"});
+            console.log("A conversation already exists :(");
+            
+            // Conversation.remove({},(err)=>{
+            //     if(err) console.log(err)
+            //     else console.log("Removed everything..")
+
+            //     return res.status(409).json({status:true,message:"Conversation already exists, use that"});
+            // })
+
+            return res.status(409).json({status:true,message:"Conversation already exists, use that"});
         }
         
-        let newConv = new Conversation({
+        // const _ = await newConv.save();
+        const newConv = await Conversation.create({
             members:[req.user._id,req.body.user2_id]
         });
-    
-        const _ = await newConv.save();
-    
+        console.log(`New conversation created is: ${newConv}`);
+
         return res.status(200).json({status:true,messege:"New Conversation created successfully!"});
     }
     catch(err){

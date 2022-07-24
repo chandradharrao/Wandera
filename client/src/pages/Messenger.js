@@ -6,11 +6,12 @@ import {io} from "socket.io-client";
 import {useHistory} from "react-router-dom";
 
 const getConversations = async ()=>{
+    console.log("Get Conversation function!")
     try{
         const response = await fetch("/conversations",{headers:{"Authorization":"Bearer "+localStorage.getItem("jwt")}});
 
         const convsersationFriends = await response.json();
-        console.log(convsersationFriends);
+        // alert(`Retrieved conversations: ${convsersationFriends}`);
         return convsersationFriends;
     }
     catch(err){
@@ -169,6 +170,8 @@ const Messenger = (props)=>{
         const conn = io("ws://localhost:8900");
         setSocket(conn);
         console.log(conn);
+
+        console.log("Fetching conversations....");
 
         //get all the conversations 
         getConversations()
