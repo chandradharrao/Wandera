@@ -27,7 +27,11 @@ const Result = (props) => {
                 usernameList.push(
                     <div className = "search-result" key = {i}>
                         <div id = "search-username">{userDetails[i].username}</div>
-                        <img id = "search-profile-pic" alt="Profile" src = {userDetails[i].profile_pic}/>
+                        <img id = "search-profile-pic" 
+                        alt="Profile" 
+                        width={"30px"}
+                        height={"30px"}
+                        src = {userDetails[i].profile_pic}/>
                         <div id = "search-followers">Followers : {userDetails[i].followers.length}
                         </div>
                         <Link to = {"/account/"+userDetails[i].username}><button id = "visit-page-button" >View Profile</button></Link>

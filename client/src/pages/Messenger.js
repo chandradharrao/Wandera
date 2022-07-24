@@ -3,7 +3,6 @@ import Conversation from "./Conversation";
 import React, { useEffect, useState, useRef } from 'react';
 import Messege from "./Messege";
 import {io} from "socket.io-client";
-import {useHistory} from "react-router-dom";
 
 const getConversations = async ()=>{
     console.log("Get Conversation function!")
@@ -11,7 +10,7 @@ const getConversations = async ()=>{
         const response = await fetch("/conversations",{headers:{"Authorization":"Bearer "+localStorage.getItem("jwt")}});
 
         const convsersationFriends = await response.json();
-        // alert(`Retrieved conversations: ${convsersationFriends}`);
+        // alert(`Retrieved conversations: ${JSON.stringify(convsersationFriends)}`);
         return convsersationFriends;
     }
     catch(err){
@@ -97,8 +96,6 @@ const Messenger = (props)=>{
         setSearchData(event.target.value);
     }
 
-    const history = useHistory();
-
     useEffect(()=>{
         console.log(searchData);
         let stored_conv = JSON.parse(localStorage.getItem("conversations"));
@@ -176,10 +173,10 @@ const Messenger = (props)=>{
         //get all the conversations 
         getConversations()
             .then(({conversations})=>{
+                localStorage.setItem("conversations",JSON.stringify(conversations));
+
                 setConversations(conversations);
                 console.log("State set!");
-
-                localStorage.setItem("conversations",JSON.stringify(conversations));
             })
             .catch(err=>console.log(err));
 
@@ -194,8 +191,9 @@ const Messenger = (props)=>{
     },[]); //loaded only once
 
     useEffect(()=>{
+        console.log("All conversations....");
+
         if(socket){
-            console.log("All conversations....");
             console.log(conversations);
 
             //get all online users
@@ -299,21 +297,24 @@ const Messenger = (props)=>{
         fetch("/createConversation",postOpt)
         .then(response=>response.json())
         .then(({status,messege})=>{
-            console.log(messege)
-
+            
             //re-fetch the conversations from server and set the state
             if(status){
-                getConversations().then(()=>{
-                    getConversations()
-                    .then(({conversations})=>{
-                        // setConversations(conversations);
-                        console.log("State set!");
+                console.log("Fetching new conversations!");
 
-                        localStorage.setItem("conversations",JSON.stringify(conversations));
-                        setConversations(conversations);
-                    })
-                    .catch(err=>console.log(err));
+                getConversations()
+                .then(({conversations})=>{
+                    // alert(JSON.stringify(conversations));
+                    console.log("State set!");
+
+                    localStorage.setItem("conversations",JSON.stringify(conversations));
+
+                    setConversations(conversations);
                 })
+                .catch(err=>console.log(err));
+            }
+            else{
+                alert("Chat already exists, find it on the left.");
             }
         })
         .catch(err=>{if(err) throw err; console.log(err)});

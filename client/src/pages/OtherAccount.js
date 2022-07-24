@@ -5,8 +5,6 @@ import "../components/About.css";
 import "../components/Albums.css";
 import Navbar from '../components/NavbarProf';
 
-import ProfilePic from "../images/profilepic.jpg";
-
 const Account = () => {
     const {username} = useParams();
 
@@ -126,7 +124,7 @@ const Account = () => {
                 <div className="about">
                     <div className="about-container">
                         <div className='user-image'>
-                            <img src={ProfilePic} alt="User"/>
+                            <img src="https://res.cloudinary.com/chandracloudinarystorage123/image/upload/v1658664452/Default/default_profile_pic_wdfejd.png" alt="User"/>
                         </div>
                         <div className='user-info'>
                             <div className="Name">{User.username}</div>

@@ -43,17 +43,19 @@ router.get("/conversations",loginAuth,async (req,res)=>{
 
     try{
         //find conversations where the members list has user as an entity
-        const all_test = await Conversation.find();
-        if(all_test.length)
-            console.log(`All conv ${all_test} in the db`);
-        else
-            console.log("Empty db :(")
+        // const all_test = await Conversation.find();
+        // if(all_test.length)
+        //     console.log(`All conv ${all_test} in the db`);
+        // else
+        //     console.log("Empty db :(")
         
         const conversations = await Conversation.find({
             members: {
-                $in: req.user._id.toString()
+                $in: ObjectId(req.user._id)
             }
         });
+
+        
         if(conversations.length)
             console.log(`Conversations retrived ${conversations} with members ${[req.user._id.toString()]}`);
         else
@@ -105,27 +107,36 @@ router.post("/createConversation",loginAuth,async (req,res)=>{
     try{
         console.log("Creating a conversation between "+req.user._id+" "+req.body.user2_id);
         //check if a conversation involving the requested memebrs already exists
-        let foundConv = Conversation.find({$or:[
-            {members:[req.user._id,req.body.user2_id]},
-            {members:[req.body.user2_id,req.user._id]}
-        ]});
 
-        if(foundConv){
+        // let foundConv = Conversation.find({$or:[
+        //     {members:[req.user._id,req.body.user2_id]},
+        //     {members:[req.body.user2_id,req.user._id]}
+        // ]});
+
+        let foundConv = await Conversation.find({
+            members: {
+                $all:[ObjectId(req.user._id),ObjectId(req.body.user2_id)]
+            }
+        })
+
+        if(foundConv.length){
             console.log("A conversation already exists :(");
-            
+            console.log("Found conversation:");
+            console.log(foundConv)
+
             // Conversation.remove({},(err)=>{
             //     if(err) console.log(err)
             //     else console.log("Removed everything..")
 
-            //     return res.status(409).json({status:true,message:"Conversation already exists, use that"});
+            //     return res.status(409).json({status:false,message:"Conversation already exists, use that"});
             // })
 
-            return res.status(409).json({status:true,message:"Conversation already exists, use that"});
+            return res.status(409).json({status:false,message:"Conversation already exists, use that"});
         }
         
         // const _ = await newConv.save();
         const newConv = await Conversation.create({
-            members:[req.user._id,req.body.user2_id]
+            members:[ObjectId(req.user._id),ObjectId(req.body.user2_id)]
         });
         console.log(`New conversation created is: ${newConv}`);
 

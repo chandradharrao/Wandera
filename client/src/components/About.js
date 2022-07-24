@@ -1,7 +1,6 @@
 import React, {useState, useContext, useEffect} from 'react';
 import {UserContext} from "../App";
 import "./About.css";
-import ProfilePic from "../images/profilepic.jpg";
 
 const CL_PRESET = "wandera";
 const CL_UPLOAD_URL = "https://api.cloudinary.com/v1_1/chandracloudinarystorage123/image/upload";

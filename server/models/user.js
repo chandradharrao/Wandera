@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     profile_pic:{
         type:String,
-        default: "../../client/src/images/profilepic.jpg"
+        default: "https://res.cloudinary.com/chandracloudinarystorage123/image/upload/v1658664452/Default/default_profile_pic_wdfejd.png"
     },
     first_name:{
         type:String,
