@@ -16,7 +16,7 @@ const Main = () => {
 
     useEffect(() => {
         // console.log("Viewing all posts!");
-        fetch('/viewallposts', {
+        fetch('/viewmyfeed', {
             headers: {
                 "Authorization":"Bearer " + localStorage.getItem("jwt")
             }
@@ -139,7 +139,7 @@ const Main = () => {
                             <div className="main-post-container">
                                 <div className="user-main-info">
                                 { 
-                                    (item.postedByUName === (state ? JSON.parse(state).username : console.log("State is null"))) ?
+                                    (item.postedByUName === (state ? state.username : console.log("State is null"))) ?
                                     <a href={`/account`}>
                                         <p>{item.postedByUName}</p>
                                     </a>

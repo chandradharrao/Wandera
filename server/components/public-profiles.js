@@ -37,6 +37,7 @@ router.get('/viewprofile/:username',(req, res) => {
             console.log(`Posts found: ${postsFound}`);
             res.status(200).json({
                 userInfo: {
+                    _id:foundUser._id.toString(),
                     name: foundUser.first_name + ' ' + foundUser.last_name, 
                     profilePicture : foundUser.profile_pic,
                     username: foundUser.username,

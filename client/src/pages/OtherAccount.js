@@ -21,6 +21,7 @@ const Account = () => {
         })
         .then(res => res.json())
         .then(data => {
+            // alert(JSON.stringify(data.userInfo))
             console.log(data);
             setUser(data.userInfo);
             setPosts(data.posts);
@@ -71,7 +72,8 @@ const Account = () => {
                 "Authorization":"Bearer " + localStorage.getItem('jwt') 
             },
             body:JSON.stringify({
-                toFollowuname:username
+                toFollowuname:username,
+                toFollowID:User._id
             })
         }).then(res=>res.json()).then(data=>{
             console.log("Started following...");

@@ -21,60 +21,6 @@ const Profile = () => {
         })
     }, []);
 
-    const Like = (post_id) => {
-        fetch('/like', {
-            method: "put",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("jwt")
-            },
-            body: JSON.stringify({
-                post_id: post_id
-            })
-        })
-        .then(res => res.json())
-        .then(result => {
-            const newLike = myPosts.map(item => {
-                if(item._id === result._id) {
-                    return result
-                } else {
-                    return item
-                }
-            })
-            setmyPosts(newLike)
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-
-    const Unlike = (post_id) => {
-        fetch('/unlike', {
-            method: "put",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("jwt")
-            },
-            body: JSON.stringify({
-                post_id: post_id
-            })
-        })
-        .then(res => res.json())
-        .then(result => {
-            const newUnlike = myPosts.map(item => {
-                if(item._id === result._id) {
-                    return result
-                } else {
-                    return item
-                }
-            })
-            setmyPosts(newUnlike)
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-
     const Delete = async (post_id) => {
         const res = await fetch(`/deletepost`, {
             method: "delete",
@@ -126,8 +72,6 @@ const Profile = () => {
                             <div className="profile-post-container">
                                 <img src={item.photo} alt="User" className="user-profile-image" />
                                 <div className="profile-icons">
-                                    <img src={like_icon} alt="Like" onClick={() => Like(item._id)} />
-                                    <img src={unlike_icon} alt="Unlike" onClick={() => Unlike(item._id)}/>
                                     <p>{item.likedBy.length} Likes</p>
                                     <img src={deleteIcon} alt="Delete Post" onClick={() => Delete(item._id)} className="delete-logo"/>
                                 </div>

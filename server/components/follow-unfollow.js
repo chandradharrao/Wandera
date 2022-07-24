@@ -32,28 +32,38 @@ mongoose.Promise = global.Promise;
 */
 router.post('/follow', login_authorize, async (req, res) => {
     try{
+        console.log(req.body)
+
         if(req.body.toFollowuname === req.user.username){
             return res.status(404).json({message:"cannot follow yourself"});
         }
 
         //user who made the request
         let user1 = await User.findOne({username:req.user.username});
-        console.log("User1 "+JSON.stringify(user1));
+        // console.log("User1 "+JSON.stringify(user1));
 
         //user whom user1 wants to follow
         let user2 = await User.findOne({username:req.body.toFollowuname});
-        console.log("User2 "+JSON.stringify(user2));
+        // console.log("User2 "+JSON.stringify(user2));
+
 
         //add user2 to user1's tollowing list if already doesnt exists
-        if(!user1.following.includes(req.body.toFollowID)){
+        // console.log("Does user1 follow user2? "+user1.following.includes(req.body.toFollowID));
+        if(!user1.following.includes()){
             user1.following.push(req.body.toFollowID);
-            const tmp = await User.findByIdAndUpdate(req.user._id,user1);
+            // console.log(user1.following)
+            const tmp = await User.findByIdAndUpdate(ObjectId(req.user._id),user1,{returnOriginal:false});
+            console.log(tmp.username + "s following after updating...");
+            console.log(tmp.following);
         }
         
         //add user1 to user2's followers if already doesnt exists
         if(!user2.followers.includes(req.user._id)){
             user2.followers.push(req.user._id);
-            const tmp = await User.findByIdAndUpdate(user2._id,user2);
+            // console.log(user2.followers);
+            const tmp = await User.findByIdAndUpdate(ObjectId(user2._id),user2,{returnOriginal:false});
+            console.log(tmp.username + "s followers after updating...");
+            console.log(tmp.followers);
         }
 
         return res.status(200).json({message:"successfully followed "+user2.username,num_followers:user2.followers.length});
@@ -77,31 +87,34 @@ router.post('/unfollow', login_authorize, async (req, res) => {
         let user1 = await User.findOne({username:req.user.username});
         let user2 = await User.findOne({username:toUnFollowuname});
 
-        const indx = user1.following.indexOf(user2._id);
-        const doesExist = indx>=0;
-        if(doesExist){
-            user1.following.splice(indx,1);
-        }
+        console.log("Before unfollowing:");
+        console.log(user1.following);
+        console.log(user2.followers);
 
-        const indx1 = user2.followers.indexOf(req.user._id);
-        const doesExist1 = indx1>=0;
-        if(doesExist1){
-            user2.followers.splice(indx1,1);
-        }
-
-        //remove user2 from user1's following
-        const tmp1 = await User.findByIdAndUpdate(user1,{
-            $set: {following:user1.following}
+        user1.following = user1.following.filter((f)=>{
+            return f&&f===user2._id;
         });
 
-        //remove user1 from user2's followers
-        const tmp2 = await User.findByIdAndUpdate(user2._id,{
-            $set:{followers:user2.followers}
-        })
+        user2.followers = user2.followers.filter((f)=>{
+            return f&&f===req.user._id;
+        });
 
-        if(!doesExist){
-            return res.status(404).json({message:"operation failed since you dont follow the user",num_followers:user2.followers.length});
-        }
+        console.log("After unfollowing");
+        
+        //remove user2 from user1's following 
+        const tmp1 = await User.findByIdAndUpdate(new ObjectId(user1._id),{
+            $set: {following:user1.following}},
+            {returnOriginal:false}
+            );
+
+        //remove user1 from user2's followers
+        const tmp2 = await User.findByIdAndUpdate(new ObjectId(user2._id),
+        {$set:{followers:user2.followers}},
+        {returnOriginal:false})
+
+        console.log(tmp1.following);
+        console.log(tmp2.followers);
+
         return res.status(200).json({message:"successfully unfollowed",num_followers:user2.followers.length});
     }
     catch(err){
@@ -114,13 +127,21 @@ router.post('/unfollow', login_authorize, async (req, res) => {
 //return <username,_id> of all friends of the user
 router.get("/getFriends",login_authorize,async (req,res)=>{
     const {followers,following} = await User.findById(new ObjectId(req.user._id));
-    const allFriends = [...followers,...following];
-    console.log(allFriends);
+    const connections =  [...followers,...following];
+
+    console.log("All friends:")
+    let allFriends = []
+    connections.forEach(c => {
+        let f = c.toString()
+        if(!allFriends.includes(f)) allFriends.push(f)
+    });
+    console.log(allFriends)
+
     let friends = [];
     let counter = 0
     allFriends.forEach( async (f,indx,arr)=>{
         if(f){
-            const foundUser = await User.findById(ObjectId(f._id));
+            const foundUser = await User.findById(new ObjectId(f));
             friends.push({
                 username:foundUser.username,
                 _id:foundUser._id

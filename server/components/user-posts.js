@@ -8,6 +8,7 @@ require('dotenv').config();
 const Post = require('../models/post');
 const User = require('../models/user');
 const Comment = require("../models/comments");
+const { ObjectId } = require('mongodb');
 
 // Connect to mongoose
 mongoose.connect(process.env.DB_URL,{
@@ -72,10 +73,17 @@ router.get("/viewmyfeed", login_authorize, async(req, res) => {
     /* Out of all the posts, find those posts that are 
     posted by users presents in the following array of the user logged in */
    try{
-        const {following} = await User.findById(req.user._id);
+        let {following} = await User.findById(new ObjectId(req.user._id));
+        following = following.map((f)=>{
+            return new ObjectId(f)
+        });
+        console.log(following);
+
         const posts = await Post.find({
             postedById: {$in:following}
         });
+        console.log(posts);
+        
         return res.status(200).json({posts});
    }
    catch(err){

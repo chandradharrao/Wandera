@@ -36,7 +36,7 @@ const Post = () => {
                 },
                 body: JSON.stringify({
                     title: heading,
-                    body: body,
+                    body: body||"--",
                     photo: URL
                 })
             })

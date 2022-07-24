@@ -11,6 +11,8 @@ app.use(require("./components/public-profiles"));
 app.use(require("./components/follow-unfollow"));
 app.use(require("./components/message"));
 
-app.listen(parseInt(process.env.PORT), () => {
-    console.log(`Listening at port ${parseInt(process.env.PORT)}...`);
-})
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+    console.log(`Listening at port ${PORT}...`);
+});
