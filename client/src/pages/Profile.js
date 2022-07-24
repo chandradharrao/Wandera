@@ -1,9 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Navbar from '../components/NavbarProf';
 import "./Profile.css";
-
-import like_icon from "../images/Like.png";
-import unlike_icon from "../images/Unlike.png";
 import deleteIcon from "../images/deleteIcon.png";
 
 const Profile = () => {

@@ -1,11 +1,14 @@
 const { Socket } = require("socket.io");
 require('dotenv').config();
 
-const io = require("socket.io")(process.env.SOCKET_SERVER_PORT,{
+const SERVER_PORT=process.env.PORT || 8900;
+
+const io = require("socket.io")(SERVER_PORT,{
 	cors:{
-		origin: `http://localhost:${process.env.CLIENT_PORT}`
+		origin: `http://localhost:${process.env.PORT || 3000}`
 	}
 });
+console.log(`Listening on ${process.env.PORT || 8900}`);
 
 //hashset that stores the user_id and sockid mapping as socketid is regernerated at client side. We can identify all the active users using this.
 let userid_sockid = new Map();
