@@ -164,7 +164,7 @@ const Messenger = (props)=>{
     useEffect(()=>{
 
         //create a connection to the server
-        const conn = io("ws://localhost:8900");
+        const conn = io("https://floating-dawn-97928.herokuapp.com/");
         setSocket(conn);
         console.log(conn);
 
